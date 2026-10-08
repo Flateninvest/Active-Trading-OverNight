@@ -1,0 +1,15 @@
+{
+  "status": "PASSED",
+  "tested_at_utc": "2026-10-08T14:45:47.542613+00:00",
+  "python_version": "3.12.14",
+  "tests_run": 65,
+  "failures": 0,
+  "errors": 0,
+  "demo": "SYNTHETIC_OPERATIONAL_FIXTURE",
+  "broker_writes": false,
+  "daily_runtime_validated": false,
+  "private_data_required": false,
+  "commit": "266f2522131240d379c84b7f02158a02aca24fc9",
+  "source_state": "COMMITTED",
+  "runner_sha256": "ec0324b334d60510ad9c06c78a45b87803e9b8a774d01c8dc081af744e7e6320"
+}
