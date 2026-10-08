@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Revision 12 timestamped market input (interface documentation)",
+  "type": "object",
+  "required": [
+    "data_kind",
+    "quotes",
+    "account",
+    "costs"
+  ],
+  "properties": {
+    "data_kind": {
+      "enum": [
+        "SYNTHETIC_OPERATIONAL_FIXTURE",
+        "OBSERVED_READ_ONLY"
+      ]
+    },
+    "quotes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "instrument_id": {
+            "type": [
+              "string",
+              "integer"
+            ]
+          },
+          "bid": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ask": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "realtime": {
+            "type": "boolean"
+          },
+          "settlement_type": {
+            "type": "string"
+          },
+          "leverage": {
+            "type": "number"
+          },
+          "entry_eligible": {
+            "type": "boolean"
+          },
+          "close_eligible": {
+            "type": "boolean"
+          },
+          "event_gate_clear": {
+            "type": "boolean"
+          },
+          "same_position_preopen_close_verified": {
+            "type": "boolean"
+          },
+          "monday_reference_close": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "reference_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "sma20": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      }
+    },
+    "account": {
+      "type": "object",
+      "properties": {
+        "risk_score": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "strategy_cash_verified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "costs": {
+      "type": "object",
+      "properties": {
+        "commission_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "fx_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "financing_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "other_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "operating_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "verified_or_paper_assumed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "invalidated_candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unrelated_core_positions": {
+      "type": "array"
+    }
+  },
+  "description": "Paper fills remain modeled even for observed read-only quotes. Never refresh observation timestamps without a new source observation. Missing factual gates block actions. See ENGINE_OPERATIONS.md and fixtures.py for scenarios."
+}

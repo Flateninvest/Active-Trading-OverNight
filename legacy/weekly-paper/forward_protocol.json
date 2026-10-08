@@ -1,0 +1,23 @@
+{
+  "version": 11,
+  "status": "proposed forward protocol; no live orders or external preregistration",
+  "evaluation_traded_sessions": 252,
+  "mechanical_roster_size": 10,
+  "maximum_entry_weight": 0.10,
+  "maximum_gross_entry_exposure": 1.0,
+  "minimum_roster_override": false,
+  "overlay_action": "remove only; removed weight remains cash",
+  "overlay_evidence_cutoff": "prior trading-session close with source availability verified",
+  "overlay_flow_rule": "positive qualifying bullish-minus-bearish premium over five official sessions ending at the prior-session cutoff; proposed, not historically validated",
+  "entry": "submit closing orders before the broker-confirmed cutoff; reference execution is the close",
+  "exit": "next executable opening print; no premarket substitution in this backtest",
+  "missing_exit": "retain position; block all new entries until exit is executable",
+  "drawdown_review_threshold": 0.12,
+  "mean_round_trip_cost_review_bps": 13,
+  "cost_review_lookback_traded_nights": 20,
+  "H1": "Positive net return after observed execution costs at session 252; negative estimate or risk suspension rejects the operating plan.",
+  "H2": "Positive paired daily overlay-minus-mechanical return; report exposure-matched control separately to distinguish selection from additional cash.",
+  "reported_costs": "20 bp per side assignment case and observed execution case shown separately",
+  "cash_interest_assumption": 0.0,
+  "parameter_changes_during_evaluation": false
+}

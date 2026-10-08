@@ -1,0 +1,9 @@
+# Verified with Python 3.12. These pinned direct dependencies rebuild the
+# numerical results, figures and Revision 11 PDF.
+numpy==2.4.4
+pandas==3.0.2
+Pillow==12.2.0
+matplotlib==3.10.9
+# Not imported directly; pandas needs it to read the .xlsx option-flow workbook.
+openpyxl==3.1.5
+reportlab==4.4.9

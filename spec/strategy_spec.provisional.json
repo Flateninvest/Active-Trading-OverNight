@@ -1,0 +1,129 @@
+{
+  "schema_status": "PROVISIONAL_NOT_WORKSHOP_VALIDATED",
+  "strategy_id": "GROK_DAILY_OVERNIGHT_v1",
+  "architecture_version": "ACTIVE_TRADING_STACK_v1",
+  "selected_design_date": "2026-10-08",
+  "default_mode": "SHADOW",
+  "live_orders_enabled": false,
+  "demo_orders_enabled": false,
+  "selection": {
+    "cadence": "DAILY",
+    "local_timezone": "Europe/Paris",
+    "input_time": "08:00",
+    "freeze_time": "08:15",
+    "session": "PREVIOUS_COMPLETED_US_SESSION",
+    "max_candidates": 10,
+    "max_review_priorities": 3,
+    "after_freeze": "REMOVE_ONLY"
+  },
+  "products": {
+    "direction": "LONG",
+    "settlement": "UNDERLYING_REAL",
+    "leverage": 1,
+    "allow_verified_us_adrs": true,
+    "options": false,
+    "shorts": false,
+    "cfds": false,
+    "etfs": false
+  },
+  "flow": {
+    "minimum_row_premium_usd": 100000,
+    "dte_at_selection_calendar_days": [
+      2,
+      10
+    ],
+    "minimum_net_bullish_usd": 1000000,
+    "minimum_qualifying_bullish_share": 0.7,
+    "direction_interpretation": "INFERRED_ASK_SIDE_NOT_VERIFIED_OPENING_OWNERSHIP"
+  },
+  "ta": {
+    "required": true,
+    "minimum_completed_daily_bars": 60,
+    "preferred_bars": 120,
+    "indicators": [
+      "SMA20",
+      "SMA50",
+      "Wilder_RSI14",
+      "ATR14",
+      "support_resistance"
+    ],
+    "sma_mechanical_gate_enabled": false,
+    "volume_mechanical_gate_enabled": false
+  },
+  "schedule": {
+    "exchange_timezone": "America/New_York",
+    "entry_weekdays": [
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "review_minutes_before_regular_close": 30,
+    "entry_minutes_before_regular_close": 5,
+    "cutoff_minutes_before_regular_close": 1,
+    "exit": "NEXT_REGULAR_US_OPENING",
+    "skip_weekend_or_full_holiday_bridge": true,
+    "derive_from_exchange_calendar": true
+  },
+  "risk": {
+    "illustrative_capital_usd": 5000,
+    "maximum_name_weight": 0.1,
+    "maximum_positions": 3,
+    "maximum_gross_weight_including_pending": 0.3,
+    "proposed_account_score_target": [
+      3,
+      4
+    ],
+    "pause_new_entries_at_score": 5,
+    "maximum_quote_age_seconds": 60,
+    "maximum_spread_bps": 20,
+    "monday_reference_ask_band_fraction": 0.02,
+    "reference_max_age_calendar_days": 4,
+    "missing_monday_reference": "BLOCK_ENTRY",
+    "dollar_loss_limit": null,
+    "drawdown_limit": null
+  },
+  "ownership": {
+    "adopt_preexisting_positions": false,
+    "close_only_strategy_owned_ids": true,
+    "protected_core_tickers": [
+      "PLTR",
+      "RKLB"
+    ],
+    "actual_protected_position_ids": null
+  },
+  "passive_execution": {
+    "study_mode": "SEPARATE_SHADOW_COMPARISON",
+    "resting_open_support": "UNVERIFIED",
+    "resting_close_support": "UNVERIFIED",
+    "unfilled_entry": "CASH",
+    "quote_touch_proves_fill": false,
+    "passive_exit_enabled": false,
+    "passive_exit_wait_seconds": null,
+    "fallback_policy": null
+  },
+  "approval": {
+    "risk_pass_is_execution_approval": false,
+    "bind_to_exact_proposal_and_specification": true,
+    "respect_platform_and_connector_gates": true,
+    "publish_copier_note": false
+  },
+  "workshop_reference": {
+    "repository_url": null,
+    "commit": null,
+    "spec_schema_verified": false,
+    "positions_schema_verified": false,
+    "log_schema_verified": false
+  },
+  "implementation_status": {
+    "daily_selection_and_ta_runtime": "NOT_IMPLEMENTED",
+    "four_component_runtime": "INSTRUCTIONS_AND_PROVISIONAL_CONTRACT_ONLY",
+    "weekly_engine": "SEPARATE_RUNNABLE_PAPER_COMPARISON",
+    "broker_writer": "NOT_IMPLEMENTED"
+  },
+  "reporting": {
+    "expected_return_range": null,
+    "keep_modes_and_variants_separate": true,
+    "require_source_commit_input_hashes_for_derived_numbers": true,
+    "retain_cash_unfilled_failed_and_unknown_observations": true
+  }
+}
