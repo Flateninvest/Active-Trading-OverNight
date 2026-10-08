@@ -1,0 +1,23 @@
+{
+  "status": "DRAFT_NOT_EXECUTION_AUTHORITY",
+  "mode": "SHADOW",
+  "account_alias": null,
+  "live_capital": null,
+  "currency": null,
+  "loss_limits": null,
+  "drawdown_limits": null,
+  "approved_by": null,
+  "approved_at": null,
+  "protected_position_ids": null,
+  "permissions": {
+    "broker_reads": "VERIFY_ACCOUNT_SCOPE",
+    "real_orders": false,
+    "demo_orders": false,
+    "public_posting": false,
+    "fund_transfers": false
+  },
+  "exit_owner": null,
+  "alert_channel": null,
+  "restart_owner": null,
+  "scope": "Draft template only; existing positions are outside this strategy."
+}

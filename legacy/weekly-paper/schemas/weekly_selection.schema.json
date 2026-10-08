@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Revision 12 frozen weekly engine input (interface documentation)",
+  "type": "object",
+  "required": [
+    "selection_id",
+    "week_start",
+    "selection_cutoff",
+    "candidates"
+  ],
+  "properties": {
+    "selection_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "week_start": {
+      "type": "string",
+      "format": "date",
+      "description": "Monday of the declared week"
+    },
+    "selection_cutoff": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timezone-aware actual knowledge cutoff"
+    },
+    "protocol": {
+      "type": "string"
+    },
+    "source_manifest": {
+      "type": "array"
+    },
+    "candidates": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "ticker",
+          "rank",
+          "thesis_active",
+          "stock_identifier_verified",
+          "selection_source_availability_proven",
+          "supporting_expiries",
+          "last_eligible_entry",
+          "source_available_at"
+        ],
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "instrument_id": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "thesis_active": {
+            "type": "boolean"
+          },
+          "flow_gate_pass": {
+            "type": "boolean"
+          },
+          "stock_identifier_verified": {
+            "type": "boolean"
+          },
+          "selection_source_availability_proven": {
+            "type": "boolean"
+          },
+          "source_available_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "supporting_expiries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "last_eligible_entry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "continuing_thesis": {
+            "type": "boolean"
+          },
+          "continuing_thesis_evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "description": "Passing JSON shape is not trading approval. Actual unknown fields remain null/false. Runtime gate checks are implemented in engine.py; this file is documentation, not an independently enforced validator."
+}

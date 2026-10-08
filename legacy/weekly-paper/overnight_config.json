@@ -1,0 +1,16 @@
+{
+  "momentum_lookback_days": 60,
+  "top_n": 10,
+  "transaction_cost_bps_per_side": 20,
+  "development_start": "2023-01-03",
+  "development_end": "2024-12-31",
+  "evaluation_start": "2025-01-01",
+  "evaluation_end": "2025-12-31",
+  "signal_lag_days": 1,
+  "portfolio_weighting": "equal",
+  "benchmark": "SPY",
+  "universe": "fixed_supplied_200_equities",
+  "cash_interest_rate": 0.0,
+  "maximum_entry_weight": 0.1,
+  "missing_exit_policy": "carry_until_next_observed_open_and_suspend_all_new_entries"
+}

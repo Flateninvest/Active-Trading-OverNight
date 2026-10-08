@@ -1,0 +1,3 @@
+# Keep the original numerical dependencies and add Windows timezone data.
+-r requirements.txt
+tzdata==2026.3
