@@ -4,11 +4,15 @@ These instructions describe the selected daily overnight strategy and the worksh
 
 | File | Use |
 | --- | --- |
-| [Complete workshop prompt](Grok_Overnight_Stock_Bot_Prompt_Workshop_2026-10-08.txt) | Start or replace the bot's operating instructions |
-| [Workshop addendum](Grok_Active_Trading_Workshop_Addendum_2026-10-08.txt) | Update an older prompt that does not contain the workshop additions |
+| [Current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt) | Effective instructions, including both workshop addenda and the mandatory research loop |
+| [Research-loop addendum](Grok_Research_Loop_Addendum_2026-10-08.txt) | Update an existing bot with Hypothesis/Build/Ablate/Hold out/Verify and report-last requirements |
+| [Archived workshop prompt](Grok_Overnight_Stock_Bot_Prompt_Workshop_2026-10-08.txt) | Earlier 8 October snapshot; lacks the new research-loop addition |
+| [Four-component addendum](Grok_Active_Trading_Workshop_Addendum_2026-10-08.txt) | Update an older prompt with the S1-S4 architecture |
 | [Grok setup](GROK_SETUP.md) | Check parsing, data, persistence and stage capabilities before a shadow exercise |
 
-**The complete workshop prompt already includes the addendum. Do not append it a second time.** Read the complete prompt when reviewing the effective instructions; the addendum alone is not the full strategy.
+**The current complete prompt already includes both addenda. Do not append either a second time.** Read the complete current prompt when reviewing effective instructions; an addendum alone is not the full strategy. The old dated workshop snapshot remains unchanged as history.
+
+For a bot that can read URLs, use the [plain-text current prompt](https://raw.githubusercontent.com/Flateninvest/Active-Trading-OverNight/main/prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt). Record the exact commit used; `main` changes as the project develops. If URL reading is unavailable, download and supply the file. A public URL grants reading, not GitHub write or trading permissions.
 
 ## Updating instructions
 
@@ -17,6 +21,7 @@ These instructions describe the selected daily overnight strategy and the worksh
 - When replacing dated files, retain previous versions as clearly labeled history and update this guide and the root links to the effective version.
 - If maintaining a standalone addendum, keep it consistent with its included section in the complete prompt.
 - Supply actual flow, Hidden Angles and research files privately under the [data policy](../docs/DATA_POLICY.md).
+- Follow the [research-loop protocol](../docs/RESEARCH_LOOP.md): log every attempt, obtain actual owner preregistration before holdout access and regenerate artifacts before accepted numerical reporting. Do not invent a signature or disclosed year.
 
 Default mode remains SHADOW. The integrated daily runtime and independently enforced four-component boundaries remain implementation work; the retained weekly engine is a separate paper comparison.
 

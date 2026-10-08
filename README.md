@@ -2,7 +2,7 @@
 
 Daily overnight-stock research for Flateninvest, with the Active Trading workshop's research, risk, operations and reporting components.
 
-**Current status: shadow design and runnable weekly paper comparison. No live or broker-demo orders are enabled.** The daily shortlist and four-component architecture are specified, but their integrated runtime is not yet implemented. The retained weekly engine is a separate comparison, not proof that the daily version is working or profitable.
+**Current status: shadow design, offline research-protocol guards and runnable weekly paper comparison. No live or broker-demo orders are enabled.** The daily shortlist and four-component architecture are specified, but their integrated runtime is not yet implemented. The retained weekly engine is a separate comparison, not proof that the daily version is working or profitable.
 
 ## Start here
 
@@ -21,6 +21,7 @@ Daily overnight-stock research for Flateninvest, with the Active Trading worksho
 | Daily shortlist strategy and Grok instructions | Documented; daily runtime remains to build |
 | Workshop specification and mandate | Provisional specification; unapproved SHADOW mandate |
 | Weekly paper comparison | Runnable synthetic tests and demonstration in `legacy/weekly-paper/` |
+| Workshop research loop | Offline plan/ablation/ledger/holdout/reproduction gates and synthetic tests; no daily backtester |
 | Live or broker-demo execution | Disabled; no broker writer supplied |
 
 The [change log](CHANGELOG.md) records project updates. Dated meeting packs and archived research preserve their original scope; they are not the source for current operating rules.
@@ -46,7 +47,9 @@ python scripts/validate_portable.py
 
 You can also use the environment's Python executable directly. The [validation record](docs/portable-check-result.json) identifies the exact previously tested source commit; CI checks each new pull request.
 
-The portable runner runs the synthetic ingestion/selection/engine tests and a synthetic paper demonstration. It does not need vendor workbooks, broker credentials or paid data. All demonstration outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs this same check on pull requests and pushes to `main`.
+The portable runner runs the weekly synthetic ingestion/selection/engine tests, the research-protocol tests and both synthetic demonstrations. It does not need vendor workbooks, broker credentials or paid data. Outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs this same check on pull requests and pushes to `main`.
+
+The [mandatory research loop](docs/RESEARCH_LOOP.md) follows Hypothesis, Build, Ablate, Hold out and Verify, with owner preregistration before holdout access and reporting last. The [current complete Grok prompt](prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt) includes these requirements. Actual holdout dates/year and approval remain unset.
 
 The retained full historical test suite and original rebuild need separately supplied historical datasets. Those private or third-party inputs are intentionally absent. The full suite's recorded 100-test result is historical evidence, not a claim that it runs data-free here.
 

@@ -12,7 +12,9 @@ The current daily design, reusable instructions and retained weekly comparison h
 | [docs/research/](research/) | Archived research and comparisons, labeled by their original scope |
 | [prompts/](../prompts/README.md) | Complete Grok instructions, separate update addendum and setup guide |
 | [spec/](../spec/README.md) | Provisional shared specification and draft operating mandate |
-| [scripts/](../scripts/) | Repository-wide checks, currently the portable validation runner |
+| [scripts/](../scripts/) | Portable validation and research-protocol command-line helper |
+| [src/active_trading/research/](../src/active_trading/research/) | Offline plan, ablation, ledger, holdout and artifact-verification guards; no daily backtester |
+| [tests/](../tests/) | Adversarial research-protocol checks using synthetic fixtures |
 | [legacy/weekly-paper/](../legacy/weekly-paper/README.md) | Retained weekly paper engine, configuration, tests and archived local instructions |
 | [.github/](../.github/) | Automatic checks and pull request guidance |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | Human change workflow |
@@ -21,7 +23,7 @@ The current daily design, reusable instructions and retained weekly comparison h
 
 ## Intended home for future daily code
 
-These paths are a layout proposal. They do not exist yet and do not represent implemented capabilities. Create them when reviewed code is ready, following the [implementation plan](IMPLEMENTATION_PLAN.md).
+The research package and root tests now contain offline protocol guards only. The daily signal/backtest pipeline and other stage packages remain implementation work. The layout below describes intended additions, not completed capabilities; follow the [implementation plan](IMPLEMENTATION_PLAN.md).
 
 | Proposed path | Intended contents |
 | --- | --- |

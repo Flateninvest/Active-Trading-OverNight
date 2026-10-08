@@ -2,9 +2,11 @@
 
 ## Portable repository checks
 
-`python scripts/validate_portable.py` runs the retained synthetic ingestion/selection/engine tests, validates the provisional JSON files can be read, and completes the weekly synthetic demo. It fetches no prices and places no real/demo broker orders. Actual local results are recorded in [portable-check-result.json](portable-check-result.json) after validation, with the checkout commit and runner hash. A missing commit before the first commit is recorded as null, never invented.
+`python scripts/validate_portable.py` runs the weekly synthetic ingestion/selection/engine tests and the offline research-protocol tests, confirms provisional JSON files can be read, and completes both synthetic demonstrations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
 
-GitHub Actions uses the same portable command. Synthetic tests are numerical/operational evidence for the weekly comparison, not an end-to-end daily TA pipeline or independent four-agent review.
+GitHub Actions uses the same portable command. Weekly tests provide software evidence for that comparison. Research-protocol tests challenge frozen identities/costs, correct one-change ablations, ledger replay and trial counts, owner-verifier holdout gates and committed/reproduced headline artifacts. Neither validates a daily backtester, independent agent permissions, owner signature infrastructure or profitability.
+
+The protocol demonstration uses invented return/cost data and explicitly simulated verification seams. It reports genuine-owner approval, actual committed-code verification, genuine research readiness and profitability evidence as false. A successfully exercised gate with synthetic inputs is not a real approved holdout result.
 
 ## Recorded full check from 7 October
 
