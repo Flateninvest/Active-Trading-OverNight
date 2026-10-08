@@ -118,12 +118,33 @@
     "daily_selection_and_ta_runtime": "NOT_IMPLEMENTED",
     "four_component_runtime": "INSTRUCTIONS_AND_PROVISIONAL_CONTRACT_ONLY",
     "weekly_engine": "SEPARATE_RUNNABLE_PAPER_COMPARISON",
-    "broker_writer": "NOT_IMPLEMENTED"
+    "broker_writer": "NOT_IMPLEMENTED",
+    "research_loop": "OFFLINE_METADATA_AND_ARTIFACT_GUARDS_ONLY",
+    "daily_frozen_dataset_backtester": "NOT_IMPLEMENTED"
   },
   "reporting": {
     "expected_return_range": null,
     "keep_modes_and_variants_separate": true,
     "require_source_commit_input_hashes_for_derived_numbers": true,
     "retain_cash_unfilled_failed_and_unknown_observations": true
+  },
+  "research_loop": {
+    "protocol_version": "WORKSHOP_RESEARCH_LOOP_v1",
+    "required": true,
+    "hypothesis_status": "DRAFT_OWNER_REVIEW_REQUIRED",
+    "proposed_hypothesis": "Previous-session directional options flow, corroborated by Hidden Angles, research and technical analysis, selects overnight stock positions whose average net close-to-next-open sleeve return is positive and exceeds an exposure-matched SPY comparator on the same eligible nights because persistent information-driven repricing continues overnight.",
+    "freeze_dataset_and_costs_before_first_run": true,
+    "retain_all_attempts_including_failed_and_unviewed": true,
+    "ablation_exactly_one_predeclared_change": true,
+    "comparator_predeclared_and_opportunity_matched": true,
+    "walk_forward_chronological": true,
+    "disclosed_holdout_year": null,
+    "holdout_period": null,
+    "forward_extension": null,
+    "owner_preregistration_approval_required_before_holdout_access": true,
+    "owner_approval_receipt": null,
+    "regenerate_from_committed_code_before_numerical_report": true,
+    "true_holdout_storage_isolation": "NOT_IMPLEMENTED",
+    "approval_authenticity": "REQUIRES_EXTERNAL_OWNER_CONTROLLED_VERIFIER"
   }
 }

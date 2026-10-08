@@ -1,6 +1,6 @@
 # Grok workshop setup
 
-Use the complete workshop prompt in this folder, plus the actual daily flow, Hidden Angles and research files supplied privately. The addendum is already included in the complete prompt; the separate addendum file is useful if updating an existing bot.
+Use [the current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt), plus the actual daily flow, Hidden Angles and research files supplied privately. Both workshop addenda are already included; do not append them again. The previous dated workshop prompt is an archive.
 
 1. Default to SHADOW. Do not call real or demo order-writing tools.
 2. Verify complete worksheet parsing, sourced TA data, timestamped quotes and persistence. State missing capabilities honestly.
@@ -10,5 +10,7 @@ Use the complete workshop prompt in this folder, plus the actual daily flow, Hid
 6. Demonstrate the lifecycle without broker writes: intake/freeze, proposal, risk verdict on that exact proposal, labeled approval record, modeled entry/exit and reconciled tear sheet.
 7. Keep passive bid/ask execution as a separate experiment. Verify resting open/close support; do not infer fills from quotes or extend the primary opening exit.
 8. Only configure routines after the exact owner, timezone/calendar behavior, permissions and missing-input/recovery rules are verified and authorised. This repository does not create them.
+9. Apply [the mandatory research loop](../docs/RESEARCH_LOOP.md). Draft the falsifiable hypothesis, freeze data and costs, log every variant, ablate one change, obtain owner-signed preregistration before opening a fresh holdout and regenerate the headline before reporting it. Actual holdout dates/year and approval remain unset.
+10. The offline demonstration can be run with `python scripts/research_loop.py demo --output .runtime/research-loop-demo`. It checks metadata/artifact workflow using invented fixtures; it is not a real strategy simulation or authenticated owner approval.
 
 Live capital, loss/drawdown limits, ownership IDs, execution capability and permission remain unapproved/unset. A risk PASS, test success or prompt upload is not transaction approval. Do not publish the copier-note draft without permission.

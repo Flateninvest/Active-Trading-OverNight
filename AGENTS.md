@@ -12,3 +12,4 @@ The current user-selected design is DAILY, as described in `docs/DAILY_STRATEGY.
 - Keep daily, weekly and passive comparisons distinct. Do not backdate source receipt, overwrite failed trials or select an execution method after observing outcomes.
 - Do not claim workshop schema compatibility until the actual reference repository/commit and validators are supplied.
 - Use pull requests for review. Never weaken runtime permissions, risk caps or the opening-exit obligation as an incidental refactor.
+- Read docs/RESEARCH_LOOP.md before experiments. Preserve all attempts, costs and frozen identities; test one declared ablation change, require owner-controlled preregistration before opening a fresh holdout, and regenerate accepted report numbers from committed code. A merge is not a research-plan signature. The offline guards do not enforce file access or authenticate the owner by themselves.

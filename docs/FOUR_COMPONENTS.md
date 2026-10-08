@@ -21,6 +21,8 @@ Approval records from synthetic fixtures must say SIMULATED_APPROVAL. A shadow s
 
 ## Reference mapping still needed
 
+The [research loop](RESEARCH_LOOP.md) adds mandatory experimental checks. S1 maintains the hypothesis, frozen plan and full trial log; S2 challenges leakage, cost/comparator fairness, one-change ablations and approval/reproduction evidence; S3 retains SHADOW permissions; S4 writes accepted performance prose only after fresh verification. Owner approval before holdout access is separate from code-review merges and from transaction approval.
+
 Obtain the workshop repository URL and commit. Compare field names/types and run its actual validators against our specification, positions and log examples. Do not claim compatibility from a guessed schema.
 
 The mid-November capstone calls for the stack in shadow, its governing mandate and reporting tear sheet. Confirm the exact deadline with the organisers. The current upload supplies instructions/contracts plus a runnable weekly comparison; it does not claim the entire daily stack is implemented.

@@ -2,6 +2,13 @@
 
 Record material project changes here. State what changed and its scope; keep numerical evidence tied to its source commit and validation record. Proposed trading changes remain proposals until accepted through the applicable mandate process.
 
+## 2026-10-08 - Mandatory workshop research loop
+
+- Added the current complete Grok prompt and separate research-loop addendum, preserving the earlier dated prompt.
+- Added offline plan/ablation checks, a chained append-only trial ledger, owner-verifier holdout gates and committed-artifact/report verification.
+- Added adversarial synthetic tests and a protocol demonstration to the portable checks.
+- Added an unapproved research plan template and documented remaining data, backtester, holdout-custody and approval requirements. No trading rules or order permissions changed.
+
 ## 2026-10-08 - Repository organization and sharing
 
 - Added an eToro reviewer reading route, folder map, prompt guide and specification guide.

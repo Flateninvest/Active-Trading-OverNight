@@ -6,6 +6,7 @@
 - Provisional shared specification and unapproved mandate template.
 - Portable weekly paper engine with ingestion, source cutoffs, sizing, calendar, persistent state, reconciliation and evaluation.
 - Synthetic tests/demonstration and GitHub review workflow.
+- Offline plan/ablation checks, append-only trial ledger, externally verified approval/reproduction gates and a synthetic protocol demonstration; see [research loop](RESEARCH_LOOP.md).
 
 ## Not implemented or not verified
 
@@ -15,6 +16,7 @@
 4. Broker writer, resting passive opening/owned-position closing, actual fills/cancel behavior and next-opening exit mechanism.
 5. Deployed schedules, alert delivery and approved capital/loss/drawdown/owner settings.
 6. Live economic evidence, reference-schema conformity or calibrated profitability.
+7. Complete daily frozen-data backtester, genuine approved holdout plan, externally controlled holdout release/signature verification and actual prospective extension.
 
 ## Suggested pull requests
 

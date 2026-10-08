@@ -32,4 +32,6 @@ Keep dated meeting PDFs and historical research as snapshots. Publish a new date
 
 Readers should use the [sharing guide](docs/SHARING.md). A public viewer can suggest a change through an issue or a fork pull request; that does not give them write access to this repository.
 
+Research experiments must also follow [the workshop loop](docs/RESEARCH_LOOP.md). Log all attempts, freeze costs and the appropriate full-model/economic comparators, and obtain real owner preregistration before opening a fresh holdout. Keep the current prompt, research policy and plan consistent. A development merge does not sign the research plan or authorize trading.
+
 Do not silently update strategy versions, approve your own policy exceptions or publish copier notes. The reference schemas and trading mandate require their own recorded acceptance.

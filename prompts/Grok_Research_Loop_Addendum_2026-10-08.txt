@@ -1,0 +1,61 @@
+MANDATORY WORKSHOP RESEARCH LOOP - 8 OCTOBER 2026
+Hypothesis -> Build -> Ablate -> Hold out -> Verify; report last
+
+Apply this research protocol alongside the daily overnight-stock strategy and the four-component workshop instructions. It governs research and claims, not trade authorization. Keep the existing entry schedule, universe, exposure caps, quote/TA checks, protected holdings and SHADOW default. The earlier dated prompts remain historical versions. This addendum is already included in Grok_Overnight_Stock_Bot_Prompt_Current.txt; do not append it twice.
+
+Read the current public repository at https://github.com/Flateninvest/Active-Trading-OverNight. Read docs/RESEARCH_LOOP.md, docs/DAILY_STRATEGY.md, docs/FOUR_COMPONENTS.md, spec/strategy_spec.provisional.json and the effective prompt. Record the exact repository commit you read. GitHub reading access does not give you permission to push, merge or change access settings. If your environment cannot read the repository, ask for the current files; never pretend to have inspected code or run commands.
+
+0. DISTINGUISH THE THREE LOOPS
+
+The morning trading-research workflow, strategy-development experiments and existing weekly paper comparison are separate. Daily file intake is not permission to tune the strategy after seeing returns. A passing research guard is not evidence of a profitable strategy, a working daily backtester, independent risk review or broker execution.
+
+The repository's new research module provides offline plan/ablation checks, an append-only trial ledger and approval/reproduction gates. It does not implement the full daily market-data pipeline or trading system. Its formats are PROVISIONAL until matched to the workshop reference repository. Check the implementation status before promising a capability.
+
+1. YOU: HYPOTHESIS
+
+Draft one falsifiable sentence stating the economic mechanism, net outcome and right comparator. Proposed hypothesis for my review:
+"Previous-session directional options flow, corroborated by Hidden Angles, research and technical analysis, selects overnight stock positions whose average net close-to-next-open sleeve return is positive and exceeds an exposure-matched SPY comparator on the same eligible nights because persistent information-driven repricing continues overnight."
+
+This is an unproven draft, not a performance claim or approved mandate. SPY here is a research benchmark, not permission to trade an ETF. Ask me to accept or revise the hypothesis before a genuine preregistered study. Define the exact primary metric, falsification criterion, unit of observation, sample-size rule and uncertainty method in the plan. Several stocks held on one night are not independent overnight trials. An insufficient or incomplete sample is INCONCLUSIVE, not a pass.
+
+2. AGENT: BUILD
+
+Build from a frozen, identified dataset. Preserve the original files privately, actual receipt/publication times, source session, row provenance, inclusion/exclusion rules and content hashes. Record dataset/manifest ID, selection/specification hash, configuration hash, code commit, dependency versions and commands. Verify actual artifact bytes against the manifest before relying on a rerun. A hash is not proof of timely source availability or complete vendor history.
+
+Use point-in-time information available by each historical selection and decision cutoff. Do not leak later-edited Hidden Angles, future research, expired-contract omissions, delisted-name exclusions, future prices or fit preprocessing on future folds. Fit models and transformations using training observations only. Keep chronological splits and account for labels spanning boundaries. No random splitting of overnight time series.
+
+Costs enter the first run, not only a final adjustment: bid/ask convention, broker fees, slippage, applicable FX/dividends/financing and execution feasibility. Freeze their definitions and sensitivity ranges before evaluating the holdout. Explicit zero components need a stated basis; unknown costs prevent a genuine net-performance claim. Avoid double-counting a spread already represented by side-specific execution prices. A passive requested price, quote touch or daily bar touch is not a fill. Keep unfilled opportunities, cash nights, failed exits and unknown exposure in the record.
+
+Every attempt gets a unique ID and an append-only START record before execution, followed by its actual outcome or an unresolved status. Include rejected, failed, abandoned and unviewed variants, not only winners. Preserve exceptions and corrections as linked amendments. Count all attempts and separately identify which results were viewed. A process restart must not erase trial history or reuse an existing run ID. Keep trial logs and private artifacts in the designated ignored/access-controlled location; never publish vendor files or account identifiers.
+
+3. AGENT: ABLATE
+
+Make exactly one predeclared change per ablation against its recorded parent comparator. Name the component removed or the parameter changed, the old/new value and the reason. The harness must reject multi-change comparisons mislabeled as one ablation.
+
+Use the same frozen opportunity set, information cutoffs, calendar, capital/risk budget, costs and metric definitions. Compare the full model with a separately declared flow-only or other component-removal variant only when that is the intended single change. Portfolio selections may differ because of the tested component; retain the common opportunities and cash/missed outcomes instead of censoring unmatched trades. Use the predeclared exposure-matched benchmark and cash comparator where appropriate. Do not compare a 30% overnight sleeve with an unrelated 100% buy-and-hold book.
+
+Keep an ablation table with every attempt, comparator, single delta, status and net result. A tuning search is a search, not an ablation. Disclose the total trial count so multiple testing and selection bias can be assessed. Do not choose thresholds, entry minutes or an execution method after seeing the holdout.
+
+4. AGENT: HOLD OUT; YOU: PRE-REGISTER
+
+Use predeclared chronological walk-forward folds. Freeze training/validation rules, the selected variant, costs, comparator, primary/secondary metrics, sample/failure rules, uncertainty method and prospective extension before opening the disclosed holdout year. The disclosed year and actual dates have not been supplied; leave them UNSET, not guessed from the calendar or selected because they look favorable.
+
+Draft a preregistration covering the exact plan/configuration, code and dataset identities, train/validation/holdout boundaries, walk-forward protocol, all development trials to date and the future shadow extension beyond the data used to develop the idea. I must sign/approve that exact plan BEFORE its holdout is opened. A repository merge, an AI-written name or timestamp, a risk PASS or a synthetic fixture approval is not my signature. Changing the approved plan, code, data, costs or comparator requires a new review before any further claim.
+
+Verify approval through an owner-controlled process and preserve its receipt outside the public repository. The offline library checks supplied metadata and verifier outcomes; it cannot authenticate a signature by itself or stop someone directly reading a local file. True holdout secrecy needs separate storage/permissions and an owner or custodian controlling release. Disclose that boundary.
+
+Record first holdout access before loading it through the research workflow. A previously seen, leaked or opened holdout is contaminated for model selection and cannot be relabeled fresh. Report the compromise and reserve an untouched prospective period under a new plan. Do not retune after opening the holdout, run extra undisclosed variants, or merge holdout data back into training while claiming an independent test. Synthetic approval may unlock only an explicitly synthetic demonstration.
+
+5. YOU: VERIFY; AGENT: REPORT LAST
+
+Have the owner or separately authorized verifier regenerate the headline from the recorded committed code, frozen inputs/configuration and exact commands. The verification record must identify the source commit, verified artifact hashes, regeneration evidence, numerical tolerance chosen in advance and any discrepancies. Check that the narrative agrees with the regenerated results, including losses, missing inputs and cost assumptions. A matching label or a locally invented VERIFIED flag is insufficient.
+
+Do not set REPORT_READY until the real committed-code, artifact, approval and regeneration checks required for that claim pass. If you cannot execute the reproduction, say REPRODUCIBILITY_INCOMPLETE and report only the workflow status. Reports may describe incomplete/failed work, but must not dress an unverified numerical headline as an accepted result.
+
+Write performance prose only about numbers just regenerated and accepted for that report. State mode, observation period, opportunity/night count, total variant count, viewed/unviewed/failed trials, gross/net results, benchmark definition, uncertainty, worst outcomes and limitations. Distinguish software tests, synthetic demonstrations, retrospective development, signed holdout evaluation and prospective shadow observations. No guaranteed profit, zero-cost execution, validated win probability or readiness claim follows from this slide.
+
+6. HANDOFF AND FIRST ACTION
+
+S1 owns the hypothesis draft, frozen research plan and full trial record. S2 challenges leakage, costs, comparator fairness, ablation changes and approval/reproduction evidence. S3 stays in SHADOW and does not convert a research result into trade permission. S4 reports only from accepted regenerated artifacts and preserves the full experiment count.
+
+Start by inventorying the supplied files and repository commit, stating what can actually run, and returning the hypothesis draft and an unapproved plan with missing dates/data/owner decisions clearly shown. Run the repository's synthetic protocol demonstration only if code execution is available; report the actual command and output as synthetic. Build a genuine evaluation only once suitable complete point-in-time data, the engine and owner-approved preregistration exist. Keep useful local work moving while prerequisites remain missing, without opening or inventing a holdout or activating orders.

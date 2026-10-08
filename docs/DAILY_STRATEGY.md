@@ -30,3 +30,5 @@ Waiting for a passive exit changes the next-opening timing. Exit-wait/fallback s
 ## Evidence
 
 No validated daily overnight win probability, best execution minute or profitable flow-plus-research backtest has been established. Current exports omit expired contracts and cannot reconstruct complete historical short-DTE activity. The legacy weekly tests demonstrate software behavior, not this daily strategy's profitability.
+
+Strategy development now follows the [mandatory workshop research loop](RESEARCH_LOOP.md): a falsifiable owner-reviewed hypothesis, frozen inputs/costs, full trial log, one-change ablations, chronological walk-forward holdout with prior owner preregistration, and fresh reproduction before accepted numerical reporting. The new code checks protocol metadata and artifacts; it does not implement the daily backtester. The disclosed year, genuine plan dates and owner approval remain unset. Existing trading rules above are unchanged.

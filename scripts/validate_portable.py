@@ -1,4 +1,4 @@
-"""Data-free weekly comparison checks. Never places broker orders."""
+"""Data-free weekly and research-protocol checks. Never places broker orders."""
 from pathlib import Path
 import json
 import hashlib
@@ -21,9 +21,14 @@ def main():
     tempfile.tempdir = str(temporary)
     os.environ["TEMP"] = os.environ["TMP"] = str(temporary)
     sys.path.insert(0, str(LEGACY))
-    suite = unittest.defaultTestLoader.discover(str(LEGACY / "tests"), pattern="test_rev12_*.py")
-    if suite.countTestCases() == 0:
+    sys.path.insert(0, str(ROOT / "src"))
+    weekly_suite = unittest.defaultTestLoader.discover(str(LEGACY / "tests"), pattern="test_rev12_*.py")
+    # Independent loaders avoid retaining the first suite's discovery root.
+    research_suite = unittest.TestLoader().discover(str(ROOT / "tests"), pattern="test_research_protocol.py")
+    weekly_count, research_count = weekly_suite.countTestCases(), research_suite.countTestCases()
+    if weekly_count == 0 or research_count == 0:
         raise RuntimeError("Portable test suite is missing; refusing an empty successful run")
+    suite = unittest.TestSuite([weekly_suite, research_suite])
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         return 1
@@ -34,17 +39,31 @@ def main():
         comparison = json.loads((Path(demo_dir) / "Synthetic_Demonstration_Comparison.json").read_text())
         if comparison["profitability_evidence"] is not False:
             raise ValueError("Demonstration must remain explicitly synthetic")
+    with tempfile.TemporaryDirectory(dir=temporary) as protocol_dir:
+        protocol_demo = subprocess.run([sys.executable, str(ROOT / "scripts" / "research_loop.py"),
+            "demo", "--output", protocol_dir], cwd=ROOT, check=True, capture_output=True, text=True)
+        summary = json.loads(protocol_demo.stdout)
+        if summary.get("status") != "SYNTHETIC_OPERATIONAL_FIXTURE" or summary.get("fixture_guard_checks_passed") is not True:
+            raise ValueError("Research protocol demonstration did not complete its fixture checks")
+        for flag in ("profitability_evidence", "broker_writes", "report_ready_for_genuine_research",
+                     "genuine_owner_approval_verified", "actual_committed_code_verified"):
+            if summary.get(flag) is not False:
+                raise ValueError("Research protocol demo must remain explicitly synthetic: " + flag)
+        print(protocol_demo.stdout.strip())
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
     committed = False
     if revision.returncode == 0:
-        changed = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", "scripts", "legacy", "spec"], cwd=ROOT)
-        untracked = subprocess.run(["git", "ls-files", "--others", "--exclude-standard", "scripts", "legacy", "spec"],
+        source_paths = ["scripts", "src", "tests", "legacy", "spec", ".github/workflows"]
+        changed = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", *source_paths], cwd=ROOT)
+        untracked = subprocess.run(["git", "ls-files", "--others", "--exclude-standard", *source_paths],
             cwd=ROOT, capture_output=True, text=True)
         committed = changed.returncode == 0 and untracked.returncode == 0 and not untracked.stdout.strip()
     record = {"status":"PASSED", "tested_at_utc":datetime.now(timezone.utc).isoformat(),
         "python_version":platform.python_version(), "tests_run":result.testsRun,
+        "legacy_weekly_tests_run":weekly_count, "research_protocol_tests_run":research_count,
         "failures":len(result.failures), "errors":len(result.errors),
         "demo":"SYNTHETIC_OPERATIONAL_FIXTURE", "broker_writes":False,
+        "research_protocol_demo":"SYNTHETIC_OPERATIONAL_FIXTURE",
         "daily_runtime_validated":False, "private_data_required":False,
         "commit":revision.stdout.strip() if committed else None,
         "source_state":"COMMITTED" if committed else "WORKTREE_NOT_COMMITTED",
