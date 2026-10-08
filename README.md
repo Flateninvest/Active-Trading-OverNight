@@ -6,14 +6,24 @@ Daily overnight-stock research for Flateninvest, with the Active Trading worksho
 
 ## Start here
 
-- [Meeting pack](docs/meeting/eToro_Active_Trading_Meeting_Pack_2026-10-08.pdf): strategy, capital/risk proposal, preparation checklist and meeting dates.
-- [Daily strategy](docs/DAILY_STRATEGY.md): the selected trading rules and their limitations.
-- [Workshop architecture](docs/FOUR_COMPONENTS.md): S1 research, S2 risk, S3 operations and S4 reporting.
-- [Complete Grok instructions](prompts/Grok_Overnight_Stock_Bot_Prompt_Workshop_2026-10-08.txt) and [workshop additions](prompts/Grok_Active_Trading_Workshop_Addendum_2026-10-08.txt).
-- [Grok setup](prompts/GROK_SETUP.md): attach the files and verify capabilities; no automatic account activation.
-- [Provisional shared specification](spec/strategy_spec.provisional.json) and [draft operating mandate](spec/operating_mandate.template.json).
-- [Runnable weekly paper engine](legacy/weekly-paper/README.md) and [validation](docs/VALIDATION.md).
-- [Implementation backlog](docs/IMPLEMENTATION_PLAN.md) and [data policy](docs/DATA_POLICY.md).
+| Your purpose | Where to start |
+| --- | --- |
+| Review the project for eToro | [Reviewer guide](docs/README.md), then the [meeting pack](docs/meeting/eToro_Active_Trading_Meeting_Pack_2026-10-08.pdf) |
+| Understand the strategy and agents | [Daily strategy](docs/DAILY_STRATEGY.md) and [four components](docs/FOUR_COMPONENTS.md) |
+| Set up the research instructions | [Prompt guide](prompts/README.md) and [shared specification](spec/README.md) |
+| Develop or update the project | [Repository map](docs/REPOSITORY_MAP.md), [contribution guide](CONTRIBUTING.md) and [implementation plan](docs/IMPLEMENTATION_PLAN.md) |
+| Check evidence or share access | [Validation](docs/VALIDATION.md), [data policy](docs/DATA_POLICY.md) and [sharing guide](docs/SHARING.md) |
+
+## What exists today
+
+| Part | Status |
+| --- | --- |
+| Daily shortlist strategy and Grok instructions | Documented; daily runtime remains to build |
+| Workshop specification and mandate | Provisional specification; unapproved SHADOW mandate |
+| Weekly paper comparison | Runnable synthetic tests and demonstration in `legacy/weekly-paper/` |
+| Live or broker-demo execution | Disabled; no broker writer supplied |
+
+The [change log](CHANGELOG.md) records project updates. Dated meeting packs and archived research preserve their original scope; they are not the source for current operating rules.
 
 ## Current daily design
 
@@ -27,13 +37,14 @@ Passive bid-side buying/ask-side selling is a separate shadow execution study. R
 
 Use Python 3.12. From this repository:
 
+Create the environment with `python -m venv .venv`. Activate it with `.\.venv\Scripts\Activate.ps1` on Windows PowerShell or `source .venv/bin/activate` on Linux/macOS. Then run:
+
 ```sh
-python -m venv .venv
 python -m pip install -r legacy/weekly-paper/requirements-rev12.txt
 python scripts/validate_portable.py
 ```
 
-Activate the environment first (`.venv/Scripts/Activate.ps1` on Windows or `source .venv/bin/activate` on Linux/macOS), or use its Python executable in each command.
+You can also use the environment's Python executable directly. The [validation record](docs/portable-check-result.json) identifies the exact previously tested source commit; CI checks each new pull request.
 
 The portable runner runs the synthetic ingestion/selection/engine tests and a synthetic paper demonstration. It does not need vendor workbooks, broker credentials or paid data. All demonstration outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs this same check on pull requests and pushes to `main`.
 
@@ -41,6 +52,8 @@ The retained full historical test suite and original rebuild need separately sup
 
 ## Managing changes
 
-Use a branch and pull request. State changes to parameters, methods, permissions and execution timing explicitly; record new trials separately. Do not overwrite older decisions or report hypothetical fills as real. The workshop reference repository has not been supplied: the specification and interface examples remain provisional until its exact schemas and commit are verified.
+Use a branch and pull request, following [CONTRIBUTING.md](CONTRIBUTING.md). Keep the current strategy, specification and effective prompt consistent; preserve dated evidence. The workshop reference repository has not been supplied: the specification and interface examples remain provisional until its exact schemas and commit are verified.
+
+`main` is the stable version to share. Public visitors can read and download it without edit permission. Human write access is held by the owner; no outside collaborators were present in the 8 October access check. Main-branch protection requires a pull request, passing checks and resolved conversations, and blocks force pushes and deletion. See the [sharing guide](docs/SHARING.md) for the access boundaries.
 
 The repository contains no broker writer, deployed routine, secrets or authority to publish copier notes. An approved specification or passing tests alone cannot authorize trading.

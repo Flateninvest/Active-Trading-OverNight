@@ -1,0 +1,50 @@
+name: Project change request
+description: Propose a project improvement, report a problem or ask for a review.
+title: "[Change] "
+body:
+  - type: markdown
+    attributes:
+      value: "Keep this public record free of credentials, account data and vendor workbooks. A request does not approve a strategy change or enable trading."
+  - type: dropdown
+    id: area
+    attributes:
+      label: Project area
+      options:
+        - Documentation or navigation
+        - Strategy or specification
+        - Grok instructions
+        - Daily research or technical analysis
+        - Risk review or approval
+        - Shadow operations
+        - Reporting
+        - Weekly comparison
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or question
+      description: Describe the current behavior and what needs to improve.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Proposed change
+      description: Name affected files and any old/new rules or values. For a question, describe the answer you need.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and validation
+      description: Provide public-safe reproduction steps, actual checks or the evaluation needed. Label synthetic and historical evidence separately.
+    validations:
+      required: true
+  - type: checkboxes
+    id: publication
+    attributes:
+      label: Public information
+      options:
+        - label: This request contains no credentials, private account records or vendor source files.
+          required: true
