@@ -8,9 +8,17 @@ GitHub Actions uses the same portable command. Weekly tests provide software evi
 
 The protocol demonstration uses invented return/cost data and explicitly simulated verification seams. It reports genuine-owner approval, actual committed-code verification, genuine research readiness and profitability evidence as false. A successfully exercised gate with synthetic inputs is not a real approved holdout result.
 
-## Three shadow controls checked 9 October 2026
+## Additional QA checked 9 October 2026
 
-The portable runner passed **267 tests** at 13:58:58 UTC on committed source [51a3b146e31cb1341e27b11c707f73ed14fc9bf6](https://github.com/Flateninvest/Active-Trading-OverNight/commit/51a3b146e31cb1341e27b11c707f73ed14fc9bf6), using Python 3.12.14. Zero failures/errors; all four synthetic demonstrations completed without broker writes. The saved record gives the runner hash and complete timestamp.
+The portable runner passed **284 tests** at 14:21:40 UTC on committed source [d0f583eed3bd1774c708338f7231da6044a3ecee](https://github.com/Flateninvest/Active-Trading-OverNight/commit/d0f583eed3bd1774c708338f7231da6044a3ecee), using Python 3.12.14: 65 weekly, 44 research-protocol, 54 earnings, 21 review, 34 accounting, 62 order-memory and 4 integration/CLI checks. Zero failures/errors; all four synthetic demonstrations completed without broker writes. The current [machine-readable record](portable-check-result.json) identifies this run and its unchanged runner hash.
+
+The extra 17 tests cover phantom FILLED states, own orders with no recorded attempt, same-clock partial-fill retries, persistent incidents after restart, atomic rollback of other intents, valid cancellations/late fills, existing per-instrument reservations and ambiguous JSON fields. Four selected new ledger regressions were also run against the previous ledger source at `973d2d0563569a98c1686427e790a55ee4b3c30e`; all four failed as expected with zero test errors, confirming they detect the prior defects. This negative control is separate from the 284 passing current-source checks.
+
+Organization review checked 25 maintained Markdown files and 179 local links: no broken links. The effective Grok prompt contains its shadow-controls addendum exactly once. No folder migration, dependency, trading-threshold or order-permission change was needed. The documented deployment, source-authentication and research-homework gaps remain.
+
+## Three shadow controls checked earlier on 9 October 2026
+
+The portable runner passed **267 tests** at 13:58:58 UTC on committed source [51a3b146e31cb1341e27b11c707f73ed14fc9bf6](https://github.com/Flateninvest/Active-Trading-OverNight/commit/51a3b146e31cb1341e27b11c707f73ed14fc9bf6), using Python 3.12.14. Zero failures/errors; all four synthetic demonstrations completed without broker writes. That run's [saved record](https://github.com/Flateninvest/Active-Trading-OverNight/blob/973d2d0563569a98c1686427e790a55ee4b3c30e/docs/portable-check-result.json) remains in its evidence commit; the current record describes the later QA run above.
 
 | Suite | Tests |
 | --- | ---: |
@@ -28,7 +36,7 @@ The 104 added tests challenge signed-review mutation/self-review/staleness, unkn
 
 ## Earnings addition checked 9 October 2026
 
-The portable runner passed **163 tests** on committed source [4722cdc2bed9126fc77dbb733e5c6693e96c0c12](https://github.com/Flateninvest/Active-Trading-OverNight/commit/4722cdc2bed9126fc77dbb733e5c6693e96c0c12): 65 weekly, 44 research-protocol and 54 earnings tests. All three synthetic demonstrations completed without broker writes. See the machine-readable record for time, Python version and runner hash.
+The portable runner passed **163 tests** on committed source [4722cdc2bed9126fc77dbb733e5c6693e96c0c12](https://github.com/Flateninvest/Active-Trading-OverNight/commit/4722cdc2bed9126fc77dbb733e5c6693e96c0c12): 65 weekly, 44 research-protocol and 54 earnings tests. All three synthetic demonstrations completed without broker writes. Its [historical machine-readable record](https://github.com/Flateninvest/Active-Trading-OverNight/blob/a4e34d9b2aa9bdc98346ee32e350e8b7fac7e4aa/docs/portable-check-result.json) retains the time, Python version and runner hash.
 
 Earnings checks cover AMC/BMO mapping, allowed weekdays, calendar bridges/early closes/DST, receipt/freeze chronology, final evidence/quote/reference checks, reconciled account state, shared and earnings-used budgets, duplicate exposure, conviction downgrades, clipped/rejected cash and preserved refresh ceilings. Passing these invented fixtures establishes helper behavior only. It does not establish a working broker bot, independently verified data, a durable ledger or profitable earnings trades.
 
