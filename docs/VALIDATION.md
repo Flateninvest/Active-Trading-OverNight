@@ -2,11 +2,17 @@
 
 ## Portable repository checks
 
-`python scripts/validate_portable.py` runs the weekly synthetic ingestion/selection/engine tests and the offline research-protocol tests, confirms provisional JSON files can be read, and completes both synthetic demonstrations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
+`python scripts/validate_portable.py` runs the weekly synthetic ingestion/selection/engine tests and the offline research-protocol tests, confirms provisional JSON files can be read, and runs the earnings session/allocation guards and synthetic demonstrations. Earnings tests exercise supplied fictional normalized facts/verdicts, not independent source verification, general PDF parsing, actual TA or broker operations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
 
 GitHub Actions uses the same portable command. Weekly tests provide software evidence for that comparison. Research-protocol tests challenge frozen identities/costs, correct one-change ablations, ledger replay and trial counts, owner-verifier holdout gates and committed/reproduced headline artifacts. Neither validates a daily backtester, independent agent permissions, owner signature infrastructure or profitability.
 
 The protocol demonstration uses invented return/cost data and explicitly simulated verification seams. It reports genuine-owner approval, actual committed-code verification, genuine research readiness and profitability evidence as false. A successfully exercised gate with synthetic inputs is not a real approved holdout result.
+
+## Earnings addition checked 9 October 2026
+
+The portable runner passed **163 tests** on committed source [4722cdc2bed9126fc77dbb733e5c6693e96c0c12](https://github.com/Flateninvest/Active-Trading-OverNight/commit/4722cdc2bed9126fc77dbb733e5c6693e96c0c12): 65 weekly, 44 research-protocol and 54 earnings tests. All three synthetic demonstrations completed without broker writes. See the machine-readable record for time, Python version and runner hash.
+
+Earnings checks cover AMC/BMO mapping, allowed weekdays, calendar bridges/early closes/DST, receipt/freeze chronology, final evidence/quote/reference checks, reconciled account state, shared and earnings-used budgets, duplicate exposure, conviction downgrades, clipped/rejected cash and preserved refresh ceilings. Passing these invented fixtures establishes helper behavior only. It does not establish a working broker bot, independently verified data, a durable ledger or profitable earnings trades.
 
 ## Recorded full check from 7 October
 

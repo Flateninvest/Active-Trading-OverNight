@@ -19,6 +19,10 @@ S1 drafts a proposal; S2 reviews that exact proposal; approval is bound to actio
 
 Approval records from synthetic fixtures must say SIMULATED_APPROVAL. A shadow stack must not submit real or demo broker orders. Broker execution, scheduler deployment and public posting need separately authorised capabilities and mandate.
 
+## Earnings responsibilities
+
+The [earnings sleeve](EARNINGS_STRATEGY.md) uses these same four stages. S1 keeps the private future-event watchlist and confirms results release separately from the call. S2 challenges final TA, event timing, earnings gaps and shared-book allocations; volatile names require enhanced review. S3 preserves the next-opening owned-position exit and cannot duplicate exposure across sleeves. S4 reports earnings separately while reconciling the combined book. One shared specification and common approval boundaries still apply.
+
 ## Reference mapping still needed
 
 The [research loop](RESEARCH_LOOP.md) adds mandatory experimental checks. S1 maintains the hypothesis, frozen plan and full trial log; S2 challenges leakage, cost/comparator fairness, one-change ablations and approval/reproduction evidence; S3 retains SHADOW permissions; S4 writes accepted performance prose only after fresh verification. Owner approval before holdout access is separate from code-review merges and from transaction approval.

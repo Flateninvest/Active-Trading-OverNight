@@ -8,6 +8,7 @@ Start here when reviewing the project for the Active Trading workshop. The selec
 | --- | --- |
 | [Meeting pack](meeting/eToro_Active_Trading_Meeting_Pack_2026-10-08.pdf) | Strategy overview, preparation requirements and meeting information |
 | [Daily strategy](DAILY_STRATEGY.md) | Selection, timing, instruments, exposure and proposed risk controls |
+| [Earnings setups](EARNINGS_STRATEGY.md) | Intermittent sheets, confirmed release windows, final review and bounded conviction stakes |
 | [Four components](FOUR_COMPONENTS.md) | Research, risk, operations and reporting responsibilities |
 | [Research loop](RESEARCH_LOOP.md) | Mandatory experimental checks, preregistration, holdout and report-last rules |
 | [Implementation plan](IMPLEMENTATION_PLAN.md) | What is available, what remains to build and suggested work packages |
@@ -17,7 +18,8 @@ Start here when reviewing the project for the Active Trading workshop. The selec
 
 | Area | Status |
 | --- | --- |
-| Daily strategy and Grok instructions | Documented; integrated daily runtime is not implemented |
+| Daily flow/research and earnings instructions | Documented; integrated daily runtime is not implemented |
+| Earnings planning helper | Offline prepared-packet schedule/allocation guards and synthetic tests |
 | Shared contracts | Provisional specification and unapproved mandate template |
 | Weekly paper comparison | Runnable code, synthetic tests and demonstration |
 | Research-loop protocol | Offline metadata/artifact guards and synthetic demonstration; not a daily backtester or holdout security system |
