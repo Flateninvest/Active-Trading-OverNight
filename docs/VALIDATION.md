@@ -8,6 +8,12 @@ GitHub Actions uses the same portable command. Weekly tests provide software evi
 
 The protocol demonstration uses invented return/cost data and explicitly simulated verification seams. It reports genuine-owner approval, actual committed-code verification, genuine research readiness and profitability evidence as false. A successfully exercised gate with synthetic inputs is not a real approved holdout result.
 
+## Earnings addition checked 9 October 2026
+
+The portable runner passed **163 tests** on committed source [4722cdc2bed9126fc77dbb733e5c6693e96c0c12](https://github.com/Flateninvest/Active-Trading-OverNight/commit/4722cdc2bed9126fc77dbb733e5c6693e96c0c12): 65 weekly, 44 research-protocol and 54 earnings tests. All three synthetic demonstrations completed without broker writes. See the machine-readable record for time, Python version and runner hash.
+
+Earnings checks cover AMC/BMO mapping, allowed weekdays, calendar bridges/early closes/DST, receipt/freeze chronology, final evidence/quote/reference checks, reconciled account state, shared and earnings-used budgets, duplicate exposure, conviction downgrades, clipped/rejected cash and preserved refresh ceilings. Passing these invented fixtures establishes helper behavior only. It does not establish a working broker bot, independently verified data, a durable ledger or profitable earnings trades.
+
 ## Recorded full check from 7 October
 
 The original local package passed 100 tests: 35 retained original numerical, 20 source/selection and 45 engine/calendar/accounting. Six additional adversarial groups passed. The historical price-based/gated rebuild matched 21 output CSVs and its summary; proprietary-flow/PDF generation was excluded.

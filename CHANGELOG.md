@@ -9,6 +9,7 @@ Record material project changes here. State what changed and its scope; keep num
 - Added proposed ordinal conviction stakes and a $2,000 illustrative earnings ceiling inside unchanged shared-book limits; no redistribution of clipped/rejected stakes and no duplicate exposures.
 - Added offline prepared-packet earnings calendar/allocation guards, CLI and synthetic tests. They do not parse arbitrary PDFs, verify sources, compute TA or enable broker operations.
 - Kept SHADOW, existing entry weekdays, next-opening exits, protected positions and approval boundaries. Preserved dated meeting packs and earlier prompts.
+- Portable validation passed 163 tests, including 54 new earnings checks, plus three synthetic demonstrations on committed source; see [validation evidence](docs/VALIDATION.md). This is software evidence only.
 
 ## 2026-10-08 - Mandatory workshop research loop
 

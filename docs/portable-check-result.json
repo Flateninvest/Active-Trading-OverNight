@@ -1,10 +1,12 @@
 {
   "status": "PASSED",
-  "tested_at_utc": "2026-10-08T15:31:14.061024+00:00",
+  "tested_at_utc": "2026-10-09T11:25:20.717588+00:00",
   "python_version": "3.12.14",
-  "tests_run": 109,
+  "tests_run": 163,
   "legacy_weekly_tests_run": 65,
   "research_protocol_tests_run": 44,
+  "earnings_tests_run": 54,
+  "earnings_demo": "SYNTHETIC_OPERATIONAL_FIXTURE",
   "failures": 0,
   "errors": 0,
   "demo": "SYNTHETIC_OPERATIONAL_FIXTURE",
@@ -12,7 +14,7 @@
   "research_protocol_demo": "SYNTHETIC_OPERATIONAL_FIXTURE",
   "daily_runtime_validated": false,
   "private_data_required": false,
-  "commit": "f428e148690e94766f4e12a0649238e201107eea",
+  "commit": "4722cdc2bed9126fc77dbb733e5c6693e96c0c12",
   "source_state": "COMMITTED",
-  "runner_sha256": "a7e0025d5b5405b4d88db93d9cabbd8dbc7143fd3bffef9b7584b0a1da4b2991"
+  "runner_sha256": "3354dd50aa0813af6493dddb0cf2157adb0ae315141527155515a968cf2362c4"
 }
