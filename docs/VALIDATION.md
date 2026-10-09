@@ -2,11 +2,29 @@
 
 ## Portable repository checks
 
-`python scripts/validate_portable.py` runs the weekly synthetic ingestion/selection/engine tests and the offline research-protocol tests, confirms provisional JSON files can be read, and runs the earnings session/allocation guards and synthetic demonstrations. Earnings tests exercise supplied fictional normalized facts/verdicts, not independent source verification, general PDF parsing, actual TA or broker operations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
+`python scripts/validate_portable.py` runs weekly synthetic ingestion/selection/engine tests, offline research-protocol checks, earnings session/allocation guards and the three shadow controls plus their demonstrations. It also confirms provisional JSON files can be read. Earnings and shadow checks use fictional normalized facts/verdicts, not independent source verification, general PDF parsing, actual TA or broker operations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
 
 GitHub Actions uses the same portable command. Weekly tests provide software evidence for that comparison. Research-protocol tests challenge frozen identities/costs, correct one-change ablations, ledger replay and trial counts, owner-verifier holdout gates and committed/reproduced headline artifacts. Neither validates a daily backtester, independent agent permissions, owner signature infrastructure or profitability.
 
 The protocol demonstration uses invented return/cost data and explicitly simulated verification seams. It reports genuine-owner approval, actual committed-code verification, genuine research readiness and profitability evidence as false. A successfully exercised gate with synthetic inputs is not a real approved holdout result.
+
+## Three shadow controls checked 9 October 2026
+
+The portable runner passed **267 tests** at 13:58:58 UTC on committed source [51a3b146e31cb1341e27b11c707f73ed14fc9bf6](https://github.com/Flateninvest/Active-Trading-OverNight/commit/51a3b146e31cb1341e27b11c707f73ed14fc9bf6), using Python 3.12.14. Zero failures/errors; all four synthetic demonstrations completed without broker writes. The saved record gives the runner hash and complete timestamp.
+
+| Suite | Tests |
+| --- | ---: |
+| Retained weekly comparison | 65 |
+| Research protocol | 44 |
+| Earnings helper | 54 |
+| Exact-proposal financial review | 18 |
+| Position fill/fee accounting | 34 |
+| Durable order/owned-exit memory | 49 |
+| Combined workflow and private report CLI | 3 |
+
+The 104 added tests challenge signed-review mutation/self-review/staleness, unknown costs, partial and fractional accounting, fee corrections, spread double-counting, shared cash/exposure reservations, unknown outcomes, exact ownership, Unicode identity, entry timing, calendar/DST, restarts, stale reconciliation, expired unfilled entries and persistent next-opening obligations. The combined exercise uses invented fills and an ephemeral synthetic reviewer key; it does not deploy a reviewer service or validate any historical trading edge.
+
+`python scripts/shadow_workflow.py --demo` runs that fictional combined exercise. `python scripts/trade_report.py --input PRIVATE.json --output NEW_PRIVATE_REPORT.json` calculates a report from normalized privately supplied records outside Git. Neither fetches/validates broker data, places an order, schedules itself or uploads a report. Genuine Grok service isolation, trusted data producers, full-book accounting and the research homework's daily harness/statistics/continuation remain unverified or unimplemented.
 
 ## Earnings addition checked 9 October 2026
 
