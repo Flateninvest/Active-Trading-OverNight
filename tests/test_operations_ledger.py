@@ -412,10 +412,13 @@ class LedgerTests(unittest.TestCase):
             with self.assertRaisesRegex(LedgerError, "cash reservation"):
                 other.register_entry(second, fixture_authorization(second), ENTRY, fixture_calendar(), authorization_verifier=synthetic_verifier)
 
-    def test_external_plus_local_union_enforces_gross_cap(self):
+    def test_external_plus_local_union_enforces_shared_caps(self):
         self.register(fixture_proposal(quantity="4", approved_notional_usd="401"))
         proposal = fixture_proposal(quantity="4", approved_notional_usd="401", instrument_id="SYNTHETIC_B",
-            account_snapshot={"available_cash_usd": "5000", "exposures": [{"instrument_id": "EXTERNAL_OWNED", "reserved_usd": "800"}]})
+            account_snapshot={"available_cash_usd": "5000", "exposures": [
+                {"instrument_id": "EXTERNAL_ONE", "reserved_usd": "400"},
+                {"instrument_id": "EXTERNAL_TWO", "reserved_usd": "400"},
+                {"instrument_id": "EXTERNAL_THREE", "reserved_usd": "400"}]})
         with self.assertRaisesRegex(LedgerError, "shared-book"):
             self.register(proposal)
 
@@ -502,6 +505,186 @@ class LedgerTests(unittest.TestCase):
             self.ledger.register_entry(proposal, auth, "2026-10-08T19:55:00Z", calendar, authorization_verifier=synthetic_verifier)
         self.ledger.abandon_entry(old["intent_id"], "2026-10-08T19:55:00Z", "UNSUBMITTED_INTENT_EXPIRED")
         self.ledger.register_entry(proposal, auth, "2026-10-08T19:55:00Z", calendar, authorization_verifier=synthetic_verifier)
+
+    @staticmethod
+    def order(intent, order_id, status="FILLED", remaining="0"):
+        return {"intent_id": intent["intent_id"], "order_id": order_id,
+                "status": status, "remaining_quantity": remaining}
+
+    def reopen(self):
+        self.ledger.close()
+        self.ledger = ShadowLedger(self.path, repository_root=ROOT)
+
+    def test_phantom_filled_entry_is_persistent_incident_not_retry_permission(self):
+        intent = self.register()
+        self.attempt(intent)
+        self.ledger.record_accepted("SYNTHETIC_ATTEMPT", "ENTRY_ORDER", ENTRY)
+        packet = self.snapshot(orders=[self.order(intent, "ENTRY_ORDER")])
+        for _ in range(2):
+            with self.assertRaisesRegex(LedgerError, "FILLED entry"):
+                self.ledger.reconcile(packet, ENTRY)
+            self.reopen()
+            self.assertEqual(self.ledger.get_intent(intent["intent_id"])["state"], "UNKNOWN")
+            with self.assertRaisesRegex(LedgerError, "No retry"):
+                self.attempt(intent, "PHANTOM_RETRY")
+        incidents = [r for r in self.ledger.event_log() if r["kind"] == "RECONCILIATION_CONFLICT_NEW_ENTRIES_BLOCKED"]
+        self.assertEqual(len(incidents), 1)
+        self.assertEqual(incidents[0]["payload"]["snapshot"], packet)
+        self.assertEqual(incidents[0]["payload"]["snapshot_digest"], canonical_digest(packet))
+        self.assertEqual(self.ledger.positions(), [])
+        # Corrected evidence may reconcile state, but it cannot erase the incident.
+        self.ledger.reconcile(self.snapshot(rid="CORRECTED_ENTRY", orders=[self.order(intent, "ENTRY_ORDER", "CANCELLED")]), ENTRY)
+        with self.assertRaisesRegex(LedgerError, "Control exception"):
+            self.attempt(intent, "CORRECTED_BUT_UNREVIEWED")
+
+    def test_phantom_filled_partial_entry_is_refused(self):
+        intent = self.bought("2")
+        self.ledger.reconcile(self.snapshot(rid="PRE_ACCEPT", at=ENTRY), ENTRY)
+        # Map the fixture's still-unassigned attempt to the reported terminal order.
+        with self.assertRaisesRegex(LedgerError, "FILLED entry"):
+            self.ledger.reconcile(self.snapshot(orders=[self.order(intent, "PARTIAL_ENTRY_ORDER")]), ENTRY)
+        self.assertEqual(self.ledger.positions()[0]["quantity"], "2")
+        self.assertEqual(self.ledger.get_intent(intent["intent_id"])["state"], "UNKNOWN")
+
+    def test_phantom_filled_exit_keeps_owned_units_due_after_restart(self):
+        self.bought()
+        intent = self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN), OPEN)
+        self.ledger.begin_attempt(intent["intent_id"], "EXIT_A", OPEN)
+        self.ledger.record_accepted("EXIT_A", "EXIT_ORDER", OPEN)
+        with self.assertRaisesRegex(LedgerError, "post-attempt fill evidence"):
+            self.ledger.reconcile(self.snapshot(at=OPEN, rid="PHANTOM_EXIT", orders=[self.order(intent, "EXIT_ORDER")]), OPEN)
+        self.reopen()
+        self.assertEqual(self.ledger.due_exits(OPEN)[0]["quantity"], "5")
+        with self.assertRaisesRegex(LedgerError, "No retry"):
+            self.ledger.begin_attempt(intent["intent_id"], "EXIT_DUPLICATE", OPEN)
+        # A corrected cancellation snapshot permits the owned exit, not new entries.
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="EXIT_CORRECTED", orders=[self.order(intent, "EXIT_ORDER", "CANCELLED")]), OPEN)
+        self.assertEqual(self.ledger.begin_attempt(intent["intent_id"], "SAFE_OWNED_EXIT", OPEN)["quantity"], "5")
+
+    def test_own_order_without_entry_attempt_persists_unknown_incident(self):
+        intent = self.register()
+        with self.assertRaisesRegex(LedgerError, "no recorded attempt"):
+            self.ledger.reconcile(self.snapshot(orders=[self.order(intent, "UNTRACKED_ENTRY", "OPEN", "5")]), ENTRY)
+        self.reopen()
+        with self.assertRaisesRegex(LedgerError, "No retry"):
+            self.attempt(intent, "DUPLICATE_UNTRACKED")
+        with self.assertRaisesRegex(LedgerError, "Unknown entry"):
+            self.register(fixture_proposal(instrument_id="SYNTHETIC_B"))
+
+    def test_untracked_own_order_with_unknown_fills_still_persists_incident(self):
+        intent = self.register()
+        packet = self.snapshot(fill_ids=["UNRECORDED_FILL"], orders=[
+            self.order(intent, "UNTRACKED_WITH_UNKNOWN_FILL", "OPEN", "4")])
+        with self.assertRaisesRegex(LedgerError, "no recorded attempt"):
+            self.ledger.reconcile(packet, ENTRY)
+        self.reopen()
+        self.assertEqual(self.ledger.get_intent(intent["intent_id"])["state"], "UNKNOWN")
+        with self.assertRaisesRegex(LedgerError, "No retry"):
+            self.attempt(intent, "UNSAFE_AFTER_MISMATCH")
+
+    def test_own_order_without_exit_attempt_preserves_due_obligation(self):
+        self.bought()
+        intent = self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", OPEN)
+        with self.assertRaisesRegex(LedgerError, "no recorded attempt"):
+            self.ledger.reconcile(self.snapshot(at=OPEN, orders=[self.order(intent, "UNTRACKED_EXIT", "OPEN", "5")]), OPEN)
+        self.reopen()
+        self.assertEqual(self.ledger.get_intent(intent["intent_id"])["state"], "UNKNOWN")
+        self.assertEqual(self.ledger.due_exits(OPEN)[0]["quantity"], "5")
+
+    def test_old_partial_cannot_cover_phantom_filled_exit_retry_at_same_timestamp(self):
+        self.bought()
+        intent = self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN), OPEN)
+        self.ledger.begin_attempt(intent["intent_id"], "EXIT_A", OPEN)
+        self.ledger.record_accepted("EXIT_A", "ORDER_A", OPEN)
+        self.fill(intent, "4", fill_id="OLD_PARTIAL", side="SELL", at=OPEN)
+        cancelled = self.order(intent, "ORDER_A", "CANCELLED")
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="CANCEL_FIRST", orders=[cancelled]), OPEN)
+        self.ledger.begin_attempt(intent["intent_id"], "EXIT_B", OPEN)
+        self.ledger.record_accepted("EXIT_B", "ORDER_B", OPEN)
+        with self.assertRaisesRegex(LedgerError, "post-attempt fill evidence"):
+            self.ledger.reconcile(self.snapshot(at=OPEN, rid="PHANTOM_RETRY", orders=[cancelled, self.order(intent, "ORDER_B")]), OPEN)
+        self.assertEqual(self.ledger.due_exits(OPEN)[0]["quantity"], "1")
+
+    def test_old_partial_cannot_cover_phantom_filled_entry_retry(self):
+        intent = self.bought("4")
+        self.ledger.reconcile(self.snapshot(rid="FIRST_CANCELLED"), ENTRY)
+        self.attempt(intent, "ENTRY_RETRY")
+        self.ledger.record_accepted("ENTRY_RETRY", "RETRY_ORDER", ENTRY)
+        with self.assertRaisesRegex(LedgerError, "FILLED entry"):
+            self.ledger.reconcile(self.snapshot(rid="PHANTOM_RETRY", orders=[self.order(intent, "RETRY_ORDER")]), ENTRY)
+        self.assertEqual(self.ledger.positions()[0]["quantity"], "4")
+
+    def test_valid_cancelled_partial_and_filled_retry_on_both_sides(self):
+        entry = self.register()
+        self.attempt(entry)
+        self.ledger.record_accepted("SYNTHETIC_ATTEMPT", "BUY_A", ENTRY)
+        self.fill(entry, "4")
+        buy_cancelled = self.order(entry, "BUY_A", "CANCELLED")
+        self.ledger.reconcile(self.snapshot(rid="BUY_CANCEL", orders=[buy_cancelled]), ENTRY)
+        self.attempt(entry, "BUY_RETRY")
+        self.ledger.record_accepted("BUY_RETRY", "BUY_B", ENTRY)
+        self.fill(entry, "1", fill_id="BUY_NEW_FILL")
+        buy_orders = [buy_cancelled, self.order(entry, "BUY_B")]
+        self.ledger.reconcile(self.snapshot(rid="BUY_DONE", orders=buy_orders), ENTRY)
+        exit_intent = self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="BEFORE_EXIT", orders=buy_orders), OPEN)
+        self.ledger.begin_attempt(exit_intent["intent_id"], "SELL_A", OPEN)
+        self.ledger.record_accepted("SELL_A", "SELL_ORDER_A", OPEN)
+        self.fill(exit_intent, "4", fill_id="SELL_PART", side="SELL", at=OPEN)
+        cancelled = self.order(exit_intent, "SELL_ORDER_A", "CANCELLED")
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="SELL_CANCEL", orders=buy_orders + [cancelled]), OPEN)
+        self.ledger.begin_attempt(exit_intent["intent_id"], "SELL_B", OPEN)
+        self.ledger.record_accepted("SELL_B", "SELL_ORDER_B", OPEN)
+        self.fill(exit_intent, "1", fill_id="SELL_REST", side="SELL", at=OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="SELL_DONE", orders=buy_orders + [cancelled, self.order(exit_intent, "SELL_ORDER_B")]), OPEN)
+        self.assertEqual(self.ledger.get_intent(exit_intent["intent_id"])["state"], "FILLED")
+        self.assertEqual(self.ledger.due_exits(OPEN), [])
+
+    def test_filled_exit_then_late_buy_remains_reconcilable_and_due(self):
+        entry = self.bought("2")
+        intent = self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN), OPEN)
+        self.ledger.begin_attempt(intent["intent_id"], "FIRST_EXIT", OPEN)
+        self.ledger.record_accepted("FIRST_EXIT", "FIRST_EXIT_ORDER", OPEN)
+        self.fill(intent, "2", fill_id="SELL_TWO", side="SELL", at=OPEN)
+        filled_order = self.order(intent, "FIRST_EXIT_ORDER")
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="FIRST_FLAT", orders=[filled_order]), OPEN)
+        self.fill(entry, "3", fill_id="LATE_BUY", at=OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="REOPENED", orders=[filled_order]), OPEN)
+        self.assertEqual(self.ledger.due_exits(OPEN)[0]["quantity"], "3")
+        self.assertEqual(self.ledger.begin_attempt(intent["intent_id"], "REOPENED_EXIT", OPEN)["quantity"], "3")
+        self.ledger.record_accepted("REOPENED_EXIT", "SECOND_EXIT_ORDER", OPEN)
+        self.fill(intent, "3", fill_id="SELL_LATE_UNITS", side="SELL", at=OPEN)
+        self.ledger.reconcile(self.snapshot(at=OPEN, rid="SECOND_FLAT", orders=[
+            filled_order, self.order(intent, "SECOND_EXIT_ORDER")]), OPEN)
+        self.assertEqual(self.ledger.due_exits(OPEN), [])
+
+    def test_reconciliation_conflict_rolls_back_other_intent_transitions(self):
+        first = self.register()
+        second = self.register(fixture_proposal(instrument_id="SYNTHETIC_B"))
+        self.attempt(first, "ATTEMPT_A")
+        self.ledger.record_accepted("ATTEMPT_A", "ORDER_A", ENTRY)
+        self.attempt(second, "ATTEMPT_B")
+        self.ledger.record_accepted("ATTEMPT_B", "ORDER_B", ENTRY)
+        with self.assertRaisesRegex(LedgerError, "FILLED entry"):
+            self.ledger.reconcile(self.snapshot(orders=[self.order(first, "ORDER_A", "CANCELLED"), self.order(second, "ORDER_B")]), ENTRY)
+        self.assertEqual(self.ledger.get_intent(first["intent_id"])["state"], "SUBMITTED")
+        self.assertEqual(self.ledger.get_intent(second["intent_id"])["state"], "UNKNOWN")
+        self.assertIsNone(self.ledger.db.execute("SELECT 1 FROM reconciliations").fetchone())
+
+    def test_existing_snapshot_name_above_cap_blocks_new_entry(self):
+        proposal = fixture_proposal(instrument_id="SYNTHETIC_B", account_snapshot={
+            "available_cash_usd": "5000", "exposures": [{"instrument_id": "EXTERNAL_OWNED", "reserved_usd": "501"}]})
+        with self.assertRaisesRegex(LedgerError, "10% per-name"):
+            self.register(proposal)
+
+    def test_existing_local_name_above_new_nav_cap_blocks_new_entry(self):
+        self.register()
+        proposal = fixture_proposal(instrument_id="SYNTHETIC_B", nav_usd="4900", quantity="4", approved_notional_usd="401")
+        with self.assertRaisesRegex(LedgerError, "10% per-name"):
+            self.register(proposal)
 
 
 if __name__ == "__main__":

@@ -56,5 +56,27 @@ class ShadowWorkflowTests(unittest.TestCase):
             self.assertNotIn("DO_NOT_ECHO_PRIVATE_IDENTIFIER", result.stdout + result.stderr)
             self.assertFalse(output.exists())
 
+    def test_private_report_refuses_duplicate_json_keys_without_writing_or_echoing(self):
+        packet = deepcopy(self.demo["normalized_final_accounting_packet"])
+        for record in [packet["ownership"], packet["reconciliation"],
+                *packet["fills"], *packet["fee_records"]]:
+            record["account_id"] = "DO_NOT_ECHO_PRIVATE_IDENTIFIER"
+        raw = json.dumps(packet)
+        variants = (
+            raw.replace('"mode": "SHADOW"', '"mode": "DEMO", "mode": "SHADOW"', 1),
+            raw.replace('"amount": "0.50"', '"amount": "1", "amount": "0.50"', 1),
+        )
+        for index, ambiguous in enumerate(variants):
+            with self.subTest(index=index), tempfile.TemporaryDirectory(
+                    prefix="private-report-test-", dir=ROOT.parent) as folder:
+                self.assertNotEqual(ambiguous, raw)
+                source, output = Path(folder) / "input.json", Path(folder) / "report.json"
+                source.write_text(ambiguous, encoding="utf-8")
+                result = self.cli("--input", str(source), "--output", str(output))
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(json.loads(result.stderr)["status"], "REFUSED")
+                self.assertNotIn("DO_NOT_ECHO_PRIVATE_IDENTIFIER", result.stdout + result.stderr)
+                self.assertFalse(output.exists())
+
 
 if __name__ == "__main__": unittest.main()

@@ -17,6 +17,15 @@ def _private(value):
     return path
 
 
+def _unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate JSON object key")
+        result[key] = value
+    return result
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", required=True, help="Private normalized accounting JSON")
@@ -25,7 +34,8 @@ def main(argv=None):
     try:
         source, output = _private(args.input), _private(args.output)
         raw = source.read_bytes()
-        packet = json.loads(raw.decode("utf-8-sig"), parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
+        packet = json.loads(raw.decode("utf-8-sig"), object_pairs_hook=_unique_object,
+            parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
         report = build_trade_report(packet)
         report["identities"] = {"input_bytes_sha256": hashlib.sha256(raw).hexdigest(),
             "accounting_source_sha256": hashlib.sha256((ROOT / "src" / "active_trading" / "reporting" / "accounting.py").read_bytes()).hexdigest(),

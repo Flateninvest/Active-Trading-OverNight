@@ -147,6 +147,37 @@ class ReviewTests(unittest.TestCase):
             self.resign()
             with self.subTest(qty=qty), self.assertRaises(ReviewError): self.check()
 
+    def test_existing_name_breach_blocks_new_entry_including_split_rows(self):
+        for amounts in (("600",), ("300", "300")):
+            self.packet, self.policy = fixture()
+            self.packet["proposal"]["account_snapshot"]["exposures"] = [
+                {"instrument_id": "other", "reserved_usd": amount} for amount in amounts]
+            self.resign()
+            with self.subTest(amounts=amounts), self.assertRaisesRegex(ReviewError, "Existing held/pending"):
+                self.check()
+
+    def test_existing_name_at_cap_allows_new_entry_including_split_rows(self):
+        for amounts in (("500",), ("250", "250")):
+            self.packet, self.policy = fixture()
+            self.packet["proposal"]["account_snapshot"]["exposures"] = [
+                {"instrument_id": "other", "reserved_usd": amount} for amount in amounts]
+            self.resign()
+            with self.subTest(amounts=amounts):
+                self.assertEqual(self.check()["decision"], "PASS")
+
+    def test_existing_name_limit_uses_trusted_policy_weight(self):
+        self.policy["risk"]["maximum_name_weight"] = 0.08
+        self.packet["proposal"]["quantity"] = "3"
+        self.packet["proposal"]["approved_notional_usd"] = "301.15"
+        self.packet["proposal"]["account_snapshot"]["exposures"] = [
+            {"instrument_id": "other", "reserved_usd": "400"}]
+        self.resign()
+        self.assertEqual(self.check()["decision"], "PASS")
+        self.packet["proposal"]["account_snapshot"]["exposures"][0]["reserved_usd"] = "400.01"
+        self.resign()
+        with self.assertRaisesRegex(ReviewError, "Existing held/pending"):
+            self.check()
+
     def test_missing_wrong_week_or_outside_band_reference(self):
         for field, value in (("date", "2026-09-28"), ("date", "2026-10-06"), ("close", "90")):
             self.packet, self.policy = fixture()

@@ -9,6 +9,7 @@ Record material project changes here. State what changed and its scope; keep num
 - Implemented private SQLite intent/attempt/owned-fill memory, atomic cash/exposure reservations, unknown-state reconciliation and persistent next-opening exit obligations. Preserved existing shared caps, weekday rules and approval gates.
 - Implemented normalized position accounting with partial-sale basis, explicit fee correction history, unknown-net handling and separate spread/live-cost diagnostics. Added a private report command.
 - Added a combined fictional restart/partial-exit/accounting demonstration and adversarial tests to the portable gate; see [validation](docs/VALIDATION.md) for committed-source evidence.
+- Additional QA tightened contradictory-order reconciliation with persistent incidents, enforced existing active-book per-name reservation limits, and rejected ambiguous duplicate JSON fields in private reports. Preserved owned exits, partial fills and the existing stage layout.
 - Updated the complete Grok prompt and standalone controls addendum plus upload guidance. Kept historical snapshots and the weekly comparison in place. No live/demo broker writer, deployed scheduler or complete daily economic study was introduced.
 
 ## 2026-10-09 - Earnings overnight research sleeve

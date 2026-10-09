@@ -9,6 +9,7 @@ The previous architecture described S1 and S2 in prompts but had no daily propos
 - A different reviewer identity and valid service-held signature are required. An unsigned JSON PASS or a self-review is refused.
 - The critic must address sources, thesis, TA, events/calendar, costs/liquidity, ownership/account and exposure. Every required check needs PASS plus evidence references. High-beta or volatile names also need enhanced review.
 - Code independently checks the supplied packet's SHADOW mode, long cash/X1 product, costs, spread/quote freshness, Monday price discipline, reconciled account scope, risk score and combined held/pending exposure limits.
+- Existing active-book reservations are aggregated by instrument; a per-name capital-cap breach blocks new entries while existing owned exit obligations remain unchanged.
 - Unknown costs, stale snapshots, changed inputs/specification, expired reviews and missing evidence stop new entries. A failed entry review does not remove an existing owned-position exit obligation.
 
 These checks operate on normalized supplied facts. They do not calculate TA, authenticate a broker response, verify an issuer, establish source receipt, or prove a financial assertion is true. Those producers still need implementation. The existing earnings helper remains responsible for earnings qualification, event timing and bounded conviction allocation before this common gate.

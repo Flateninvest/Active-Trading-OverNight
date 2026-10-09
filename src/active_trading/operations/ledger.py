@@ -22,6 +22,14 @@ class LedgerError(ValueError):
     """An inconsistent, unapproved or unsafe SHADOW state transition."""
 
 
+class _ReconciliationConflict(LedgerError):
+    """Contradictory own-order facts that must survive a refused snapshot."""
+
+    def __init__(self, reason: str, intent_id: str):
+        super().__init__(reason)
+        self.intent_id = intent_id
+
+
 NY = ZoneInfo("America/New_York")
 PENDING = {"PLANNED", "SUBMITTING", "SUBMITTED", "PARTIAL", "UNKNOWN", "RECONCILED"}
 
@@ -263,6 +271,8 @@ class ShadowLedger:
         union = {name: max(supplied.get(name, Decimal(0)), local.get(name, Decimal(0))) for name in supplied.keys() | local.keys()}
         if proposal["instrument_id"] in union:
             raise LedgerError("Existing owned or pending exposure prohibits another entry in this instrument")
+        if any(amount > nav * Decimal("0.10") for amount in union.values()):
+            raise LedgerError("Existing supplied/local exposure exceeds the 10% per-name maximum")
         if len(union) >= 3 or sum(union.values(), Decimal(0)) + notional > nav * Decimal("0.30"):
             raise LedgerError("Atomic shared-book position/gross reservation limit exceeded")
         unrepresented = sum((max(amount - supplied.get(name, Decimal(0)), Decimal(0)) for name, amount in local.items()), Decimal(0))
@@ -636,99 +646,165 @@ class ShadowLedger:
                 raise LedgerError("snapshot." + key + ": array required")
         if len(snapshot["fill_ids"]) != len(set(snapshot["fill_ids"])):
             raise LedgerError("Duplicate snapshot fill IDs")
+        conflict = None
         with self._transaction():
-            old = self.db.execute("SELECT * FROM reconciliations WHERE reconciliation_id=?", (snapshot["reconciliation_id"],)).fetchone()
-            if old:
-                if old["payload"] != _json(snapshot):
-                    raise LedgerError("Reconciliation ID reused with conflicting content")
-                return {"status": "RECONCILED", "reconciliation_id": snapshot["reconciliation_id"], "idempotent": True}
-            known_positions = self.db.execute("SELECT * FROM positions WHERE account_id=? AND strategy_id=?", (snapshot["account_id"], snapshot["strategy_id"])).fetchall()
-            supplied_positions = {}
-            for row in snapshot["positions"]:
-                if not isinstance(row, dict):
-                    raise LedgerError("snapshot position: object required")
-                position_id = _text(row.get("position_id"), "snapshot.position_id")
-                _text(row.get("instrument_id"), "snapshot.instrument_id")
-                _number(row.get("quantity"), "snapshot.position.quantity")
-                if position_id in supplied_positions:
-                    raise LedgerError("Duplicate snapshot position IDs")
-                supplied_positions[position_id] = row
-            for position in known_positions:
-                supplied = supplied_positions.get(position["position_id"])
-                actual = Decimal(0) if supplied is None else _number(supplied["quantity"], "snapshot.position.quantity")
-                if actual != Decimal(position["quantity"]) or (supplied is not None and supplied["instrument_id"] != position["instrument_id"]):
-                    raise LedgerError("Owned position mismatch: reconcile explicit missing fills before retry")
-            known_fills = {row["fill_id"] for row in self.db.execute("SELECT f.* FROM fills f JOIN entries e ON (f.intent_id=e.intent_id) OR f.intent_id IN (SELECT intent_id FROM exits WHERE entry_intent_id=e.intent_id) WHERE f.account_id=? AND e.strategy_id=?", (snapshot["account_id"], snapshot["strategy_id"]))}
-            if set(snapshot["fill_ids"]) != known_fills:
-                raise LedgerError("Snapshot fill history differs: record missing/contradictory fills before retry")
-            if any(_stamp(row["filled_at"], "fill.filled_at") > observed for row in self.fills()
-                   if row["account_id"] == snapshot["account_id"] and row["strategy_id"] == snapshot["strategy_id"]):
-                raise LedgerError("Snapshot predates a recorded fill")
-            entries = self.db.execute("SELECT * FROM entries WHERE account_id=? AND strategy_id=?", (snapshot["account_id"], snapshot["strategy_id"])).fetchall()
-            owned_intents = {row["intent_id"]: ("entries", row) for row in entries}
-            for entry in entries:
-                for row in self.db.execute("SELECT * FROM exits WHERE entry_intent_id=?", (entry["intent_id"],)):
-                    owned_intents[row["intent_id"]] = ("exits", row)
-            orders = {}
-            for row in snapshot["orders"]:
-                if not isinstance(row, dict):
-                    raise LedgerError("snapshot order: object required")
-                intent_id, order_id = _text(row.get("intent_id"), "snapshot.order.intent_id"), _text(row.get("order_id"), "snapshot.order.order_id")
-                if intent_id not in owned_intents:
-                    if row.get("strategy_id") == snapshot["strategy_id"]:
-                        raise LedgerError("Unrecognized order claims this strategy; reconcile before retry")
-                    continue
-                if order_id in orders:
-                    raise LedgerError("Duplicate snapshot order IDs")
-                if row.get("status") not in ("OPEN", "CANCELLED", "FILLED", "REJECTED"):
-                    raise LedgerError("Unknown order status cannot authorize retry")
-                remaining = _number(row.get("remaining_quantity"), "order.remaining_quantity")
-                if (row["status"] == "OPEN") != (remaining > 0):
-                    raise LedgerError("Order status/remaining quantity conflict")
-                orders[order_id] = row
-            for intent_id, (table, intent) in owned_intents.items():
+            # Keep conflict persistence atomic with validation: a rejected
+            # snapshot cannot leave PLANNED permission available after restart.
+            self.db.execute("SAVEPOINT supplied_reconciliation")
+            try:
+                result = self._reconcile_snapshot(snapshot, at, observed)
+                self.db.execute("RELEASE supplied_reconciliation")
+            except _ReconciliationConflict as exc:
+                self.db.execute("ROLLBACK TO supplied_reconciliation")
+                self.db.execute("RELEASE supplied_reconciliation")
+                kind, intent = self._intent(exc.intent_id)
+                entry_id = intent["intent_id"] if kind == "ENTRY" else intent["entry_intent_id"]
+                incident_id = "reconciliation-conflict-" + canonical_digest(
+                    [snapshot["reconciliation_id"], canonical_digest(snapshot), exc.intent_id, str(exc)])
+                self.db.execute("INSERT OR IGNORE INTO control_exceptions VALUES(?,?,?,?)",
+                                (incident_id, entry_id, str(exc), at.isoformat()))
+                table = "entries" if kind == "ENTRY" else "exits"
+                self.db.execute(f"UPDATE {table} SET state='UNKNOWN' WHERE intent_id=?", (exc.intent_id,))
+                self._event(incident_id, "RECONCILIATION_CONFLICT_NEW_ENTRIES_BLOCKED",
+                            {"intent_id": exc.intent_id, "reason": str(exc),
+                             "snapshot_digest": canonical_digest(snapshot), "snapshot": snapshot}, at)
+                conflict = exc
+        if conflict is not None:
+            raise LedgerError(str(conflict))
+        return result
+
+    def _validate_filled_orders(self, intent_id: str, table: str, intent, attempts, orders) -> None:
+        """Do not turn a contradictory FILLED status into retry permission.
+
+        Each retry requests all then-remaining units. Fill event sequences, rather
+        than timestamp order, prevent an old partial fill from covering a later
+        retry, including attempts sharing a clock timestamp. Per-order fill
+        authentication still belongs to the normalized source adapter.
+        """
+        filled = []
+        for attempt in attempts:
+            order = orders.get(attempt["order_id"])
+            if order is None or order["status"] != "FILLED":
+                continue
+            event = self.db.execute("SELECT sequence FROM events WHERE event_key=?",
+                                    ("attempt:" + attempt["attempt_id"],)).fetchone()
+            if event is None:
+                raise _ReconciliationConflict("FILLED order has no durable attempt event", intent_id)
+            filled.append((event["sequence"], Decimal(attempt["quantity"])))
+        if not filled:
+            return
+        if table == "entries" and Decimal(intent["bought"]) < Decimal(intent["quantity"]):
+            raise _ReconciliationConflict("FILLED entry order contradicts incomplete recorded fills", intent_id)
+        side = "BUY" if table == "entries" else "SELL"
+        facts = [(row["sequence"], Decimal(json.loads(row["payload"])["quantity"]))
+                 for row in self.db.execute("SELECT sequence,payload FROM fills WHERE intent_id=? AND side=?",
+                                            (intent_id, side))]
+        for boundary, _ in filled:
+            required = sum((quantity for sequence, quantity in filled if sequence >= boundary), Decimal(0))
+            supplied = sum((quantity for sequence, quantity in facts if sequence > boundary), Decimal(0))
+            if supplied < required:
+                raise _ReconciliationConflict("FILLED order contradicts its durable post-attempt fill evidence", intent_id)
+
+    def _reconcile_snapshot(self, snapshot: dict, at: datetime, observed: datetime) -> dict:
+        entries = self.db.execute("SELECT * FROM entries WHERE account_id=? AND strategy_id=?", (snapshot["account_id"], snapshot["strategy_id"])).fetchall()
+        owned_intents = {row["intent_id"]: ("entries", row) for row in entries}
+        for entry in entries:
+            for row in self.db.execute("SELECT * FROM exits WHERE entry_intent_id=?", (entry["intent_id"],)):
+                owned_intents[row["intent_id"]] = ("exits", row)
+        orders = {}
+        for row in snapshot["orders"]:
+            if not isinstance(row, dict):
+                raise LedgerError("snapshot order: object required")
+            intent_id, order_id = _text(row.get("intent_id"), "snapshot.order.intent_id"), _text(row.get("order_id"), "snapshot.order.order_id")
+            if intent_id not in owned_intents:
+                if row.get("strategy_id") == snapshot["strategy_id"]:
+                    raise LedgerError("Unrecognized order claims this strategy; reconcile before retry")
+                continue
+            if order_id in orders:
+                raise LedgerError("Duplicate snapshot order IDs")
+            if row.get("status") not in ("OPEN", "CANCELLED", "FILLED", "REJECTED"):
+                raise LedgerError("Unknown order status cannot authorize retry")
+            remaining = _number(row.get("remaining_quantity"), "order.remaining_quantity")
+            if (row["status"] == "OPEN") != (remaining > 0):
+                raise LedgerError("Order status/remaining quantity conflict")
+            orders[order_id] = row
+        # An unexpected own order is an incident even if other snapshot
+        # sections contain unknown or contradictory fills/positions.
+        for intent_id in owned_intents:
+            if (any(row["intent_id"] == intent_id for row in orders.values())
+                    and self.db.execute("SELECT 1 FROM attempts WHERE intent_id=?", (intent_id,)).fetchone() is None):
+                raise _ReconciliationConflict("Own order has no recorded attempt", intent_id)
+        old = self.db.execute("SELECT * FROM reconciliations WHERE reconciliation_id=?", (snapshot["reconciliation_id"],)).fetchone()
+        if old:
+            if old["payload"] != _json(snapshot):
+                raise LedgerError("Reconciliation ID reused with conflicting content")
+            return {"status": "RECONCILED", "reconciliation_id": snapshot["reconciliation_id"], "idempotent": True}
+        known_positions = self.db.execute("SELECT * FROM positions WHERE account_id=? AND strategy_id=?", (snapshot["account_id"], snapshot["strategy_id"])).fetchall()
+        supplied_positions = {}
+        for row in snapshot["positions"]:
+            if not isinstance(row, dict):
+                raise LedgerError("snapshot position: object required")
+            position_id = _text(row.get("position_id"), "snapshot.position_id")
+            _text(row.get("instrument_id"), "snapshot.instrument_id")
+            _number(row.get("quantity"), "snapshot.position.quantity")
+            if position_id in supplied_positions:
+                raise LedgerError("Duplicate snapshot position IDs")
+            supplied_positions[position_id] = row
+        for position in known_positions:
+            supplied = supplied_positions.get(position["position_id"])
+            actual = Decimal(0) if supplied is None else _number(supplied["quantity"], "snapshot.position.quantity")
+            if actual != Decimal(position["quantity"]) or (supplied is not None and supplied["instrument_id"] != position["instrument_id"]):
+                raise LedgerError("Owned position mismatch: reconcile explicit missing fills before retry")
+        known_fills = {row["fill_id"] for row in self.db.execute("SELECT f.* FROM fills f JOIN entries e ON (f.intent_id=e.intent_id) OR f.intent_id IN (SELECT intent_id FROM exits WHERE entry_intent_id=e.intent_id) WHERE f.account_id=? AND e.strategy_id=?", (snapshot["account_id"], snapshot["strategy_id"]))}
+        if set(snapshot["fill_ids"]) != known_fills:
+            raise LedgerError("Snapshot fill history differs: record missing/contradictory fills before retry")
+        if any(_stamp(row["filled_at"], "fill.filled_at") > observed for row in self.fills()
+               if row["account_id"] == snapshot["account_id"] and row["strategy_id"] == snapshot["strategy_id"]):
+            raise LedgerError("Snapshot predates a recorded fill")
+        for intent_id, (table, intent) in owned_intents.items():
+            attempts = self.db.execute("SELECT * FROM attempts WHERE intent_id=?", (intent_id,)).fetchall()
+            if not attempts:
+                continue
+            if observed < max(_stamp(row["updated_at"], "attempt.updated_at") for row in attempts):
+                raise LedgerError("Snapshot predates the latest attempt/unknown event")
+            for attempt in attempts:
+                if attempt["order_id"] is not None and attempt["order_id"] not in orders:
+                    raise LedgerError("Snapshot omits an accepted order's final/open state")
+                if attempt["order_id"] in orders and orders[attempt["order_id"]]["intent_id"] != intent_id:
+                    raise LedgerError("Order/intent mapping conflict")
+            own_orders = [row for row in orders.values() if row["intent_id"] == intent_id]
+            unmapped_orders = [row for row in own_orders if row["order_id"] not in {a["order_id"] for a in attempts}]
+            unmapped_attempts = [row for row in attempts if row["order_id"] is None]
+            if unmapped_orders:
+                if len(unmapped_orders) != 1 or len(unmapped_attempts) != 1:
+                    raise LedgerError("Cannot unambiguously reconcile unknown order/attempt mapping")
+                self.db.execute("UPDATE attempts SET order_id=? WHERE attempt_id=?",
+                                 (unmapped_orders[0]["order_id"], unmapped_attempts[0]["attempt_id"]))
                 attempts = self.db.execute("SELECT * FROM attempts WHERE intent_id=?", (intent_id,)).fetchall()
-                if not attempts:
-                    continue
-                if observed < max(_stamp(row["updated_at"], "attempt.updated_at") for row in attempts):
-                    raise LedgerError("Snapshot predates the latest attempt/unknown event")
-                for attempt in attempts:
-                    if attempt["order_id"] is not None and attempt["order_id"] not in orders:
-                        raise LedgerError("Snapshot omits an accepted order's final/open state")
-                    if attempt["order_id"] in orders and orders[attempt["order_id"]]["intent_id"] != intent_id:
-                        raise LedgerError("Order/intent mapping conflict")
-                own_orders = [row for row in orders.values() if row["intent_id"] == intent_id]
-                unmapped_orders = [row for row in own_orders if row["order_id"] not in {a["order_id"] for a in attempts}]
-                unmapped_attempts = [row for row in attempts if row["order_id"] is None]
-                if unmapped_orders:
-                    if len(unmapped_orders) != 1 or len(unmapped_attempts) != 1:
-                        raise LedgerError("Cannot unambiguously reconcile unknown order/attempt mapping")
-                    self.db.execute("UPDATE attempts SET order_id=? WHERE attempt_id=?",
-                                     (unmapped_orders[0]["order_id"], unmapped_attempts[0]["attempt_id"]))
-                    attempts = self.db.execute("SELECT * FROM attempts WHERE intent_id=?", (intent_id,)).fetchall()
-                open_units = sum((_number(row["remaining_quantity"], "remaining_quantity") for row in own_orders if row["status"] == "OPEN"), Decimal(0))
-                if table == "entries":
-                    remaining = max(Decimal(intent["quantity"]) - Decimal(intent["bought"]), Decimal(0))
+            self._validate_filled_orders(intent_id, table, intent, attempts, orders)
+            open_units = sum((_number(row["remaining_quantity"], "remaining_quantity") for row in own_orders if row["status"] == "OPEN"), Decimal(0))
+            if table == "entries":
+                remaining = max(Decimal(intent["quantity"]) - Decimal(intent["bought"]), Decimal(0))
+            else:
+                remaining = Decimal(self.db.execute("SELECT quantity FROM positions WHERE account_id=? AND mode='SHADOW' AND position_id=?", (intent["account_id"], intent["position_id"])).fetchone()[0])
+            if open_units > remaining:
+                raise LedgerError("Open orders exceed approved/owned remaining quantity")
+            state = "FILLED" if not remaining else ("SUBMITTED" if open_units else "RECONCILED")
+            # An explicitly abandoned entry never becomes retryable again.
+            if table == "entries" and intent["state"] == "CANCELLED":
+                state = "CANCELLED"
+            self.db.execute(f"UPDATE {table} SET state=? WHERE intent_id=?", (state, intent_id))
+            for attempt in attempts:
+                order = orders.get(attempt["order_id"])
+                if order is None:
+                    # No assigned order ID after timeout: authoritative all-
+                    # orders/fills/positions evidence may show no submission.
+                    attempt_state = "RECONCILED"
                 else:
-                    remaining = Decimal(self.db.execute("SELECT quantity FROM positions WHERE account_id=? AND mode='SHADOW' AND position_id=?", (intent["account_id"], intent["position_id"])).fetchone()[0])
-                if open_units > remaining:
-                    raise LedgerError("Open orders exceed approved/owned remaining quantity")
-                state = "FILLED" if not remaining else ("SUBMITTED" if open_units else "RECONCILED")
-                # An explicitly abandoned entry never becomes retryable again.
-                if table == "entries" and intent["state"] == "CANCELLED":
-                    state = "CANCELLED"
-                self.db.execute(f"UPDATE {table} SET state=? WHERE intent_id=?", (state, intent_id))
-                for attempt in attempts:
-                    order = orders.get(attempt["order_id"])
-                    if order is None:
-                        # No assigned order ID after timeout: authoritative all-
-                        # orders/fills/positions evidence may show no submission.
-                        attempt_state = "RECONCILED"
-                    else:
-                        attempt_state = "SUBMITTED" if order["status"] == "OPEN" else order["status"]
-                    self.db.execute("UPDATE attempts SET state=?,updated_at=? WHERE attempt_id=?", (attempt_state, observed.isoformat(), attempt["attempt_id"]))
-            self.db.execute("INSERT INTO reconciliations VALUES(?,?,?,?,?)", (snapshot["reconciliation_id"], snapshot["account_id"], snapshot["strategy_id"], observed.isoformat(), _json(snapshot)))
-            self._event("reconcile:" + snapshot["reconciliation_id"], "COMPLETE_SUPPLIED_RECONCILIATION", snapshot, at)
+                    attempt_state = "SUBMITTED" if order["status"] == "OPEN" else order["status"]
+                self.db.execute("UPDATE attempts SET state=?,updated_at=? WHERE attempt_id=?", (attempt_state, observed.isoformat(), attempt["attempt_id"]))
+        self.db.execute("INSERT INTO reconciliations VALUES(?,?,?,?,?)", (snapshot["reconciliation_id"], snapshot["account_id"], snapshot["strategy_id"], observed.isoformat(), _json(snapshot)))
+        self._event("reconcile:" + snapshot["reconciliation_id"], "COMPLETE_SUPPLIED_RECONCILIATION", snapshot, at)
         return {"status": "RECONCILED", "reconciliation_id": snapshot["reconciliation_id"], "idempotent": False}
 
     def abandon_entry(self, intent_id: str, now: Any, reason: str) -> None:

@@ -208,18 +208,21 @@ def review_proposal(proposal, review, policy, *, reviewer_keys, now):
     if not isinstance(exposures, list):
         raise ReviewError("Current plus pending strategy exposures are required")
     total = Decimal("0")
-    instruments = set()
+    instruments = {}
+    name_cap = nav * _number(risk["maximum_name_weight"], "name cap")
     for item in exposures:
         item = _mapping(item, "exposure")
         instrument = _text(item.get("instrument_id"), "exposure instrument")
         amount = _number(item.get("reserved_usd"), "exposure amount", positive=True)
         total += amount
-        instruments.add(instrument)
+        instruments[instrument] = instruments.get(instrument, Decimal("0")) + amount
+    if any(amount > name_cap for amount in instruments.values()):
+        raise ReviewError("Existing held/pending instrument exceeds the shared per-name capital cap")
     if proposal["instrument_id"] in instruments:
         raise ReviewError("Instrument already held or pending in either sleeve")
     if len(instruments) >= int(risk["maximum_positions"]):
         raise ReviewError("Combined position cap reached")
-    if notional > nav * _number(risk["maximum_name_weight"], "name cap"):
+    if notional > name_cap:
         raise ReviewError("Entry exceeds the shared per-name capital cap")
     if total + notional > nav * _number(risk["maximum_gross_weight_including_pending"], "gross cap"):
         raise ReviewError("Entry exceeds combined held/pending capital cap")
