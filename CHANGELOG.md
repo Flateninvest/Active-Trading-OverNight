@@ -2,6 +2,14 @@
 
 Record material project changes here. State what changed and its scope; keep numerical evidence tied to its source commit and validation record. Proposed trading changes remain proposals until accepted through the applicable mandate process.
 
+## 2026-10-09 - Earnings overnight research sleeve
+
+- Added intermittent private earnings-sheet intake, issuer-confirmed release windows, entry-day freeze and final timing/TA/news/risk review to the maintained strategy and complete Grok prompt.
+- Added a separate earnings qualification route: numeric flow thresholds remain mandatory for ordinary flow candidates; earnings records flow as corroborating, contrary or absent evidence.
+- Added proposed ordinal conviction stakes and a $2,000 illustrative earnings ceiling inside unchanged shared-book limits; no redistribution of clipped/rejected stakes and no duplicate exposures.
+- Added offline prepared-packet earnings calendar/allocation guards, CLI and synthetic tests. They do not parse arbitrary PDFs, verify sources, compute TA or enable broker operations.
+- Kept SHADOW, existing entry weekdays, next-opening exits, protected positions and approval boundaries. Preserved dated meeting packs and earlier prompts.
+
 ## 2026-10-08 - Mandatory workshop research loop
 
 - Added the current complete Grok prompt and separate research-loop addendum, preserving the earlier dated prompt.

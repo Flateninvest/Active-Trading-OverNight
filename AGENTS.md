@@ -2,7 +2,7 @@
 
 The current user-selected design is DAILY, as described in `docs/DAILY_STRATEGY.md`, the workshop Grok prompt and the provisional shared specification. The weekly engine under `legacy/weekly-paper` is a distinct paper comparison. Do not treat its tests or agent instructions as validation or selection rules for the daily version.
 
-- Read README, strategy, architecture, implementation plan, data policy and specification before changes.
+- Read README, strategy, architecture, implementation plan, data policy and specification before changes. The earnings sleeve in docs/EARNINGS_STRATEGY.md shares the existing book caps/schedule and uses a separate qualification route; never silently waive common controls or duplicate an underlying exposure across sleeves.
 - Keep default mode SHADOW. No real/demo orders, transfers, liquidation of unrelated holdings, deployment or external publishing is authorised by this repository.
 - Preserve mandatory human/platform/broker approval gates. Risk PASS is not trade approval.
 - Put derived numerical results in reproducible code; record input/specification/code identities, actual commands and outcomes. Never invent a commit, fill, price, test result or calibrated win probability.

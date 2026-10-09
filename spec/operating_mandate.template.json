@@ -19,5 +19,11 @@
   "exit_owner": null,
   "alert_channel": null,
   "restart_owner": null,
-  "scope": "Draft template only; existing positions are outside this strategy."
+  "scope": "Draft template only; both research sleeves share common book limits. Existing unrelated positions are outside this strategy. No order authority follows from this template.",
+  "strategy_id": "GROK_DAILY_OVERNIGHT_v2",
+  "research_sleeves": [
+    "FLOW_RESEARCH_OVERNIGHT",
+    "EARNINGS_OVERNIGHT"
+  ],
+  "earnings_allocation_ceiling_usd": null
 }

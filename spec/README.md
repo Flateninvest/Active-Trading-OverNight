@@ -26,3 +26,7 @@ The [portable check](../scripts/validate_portable.py) confirms these JSON files 
 ## Reference alignment
 
 When the official repository is supplied, record its URL and exact commit, map specification/positions/log fields, and run its actual validators. Keep verification flags false until that evidence exists. Follow the [four-component contract](../docs/FOUR_COMPONENTS.md), [implementation plan](../docs/IMPLEMENTATION_PLAN.md) and [contribution guide](../CONTRIBUTING.md).
+
+## Earnings sleeve
+
+The current v2 strategy adds EARNINGS_OVERNIGHT alongside FLOW_RESEARCH_OVERNIGHT. Its earnings ceiling, ordinal conviction weights and extra name cap are illustrative shadow policy inside the existing common limits. See [the earnings strategy](../docs/EARNINGS_STRATEGY.md) for release verification, final-review requirements and the offline helper boundary. A code merge or this provisional configuration does not approve a trading mandate.

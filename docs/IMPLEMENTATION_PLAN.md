@@ -2,7 +2,8 @@
 
 ## Available
 
-- Current daily strategy, workshop four-component instructions and Grok prompt.
+- Current daily flow/research plus earnings strategy, workshop four-component instructions and updated complete Grok prompt.
+- Offline earnings release/session mapping, prepared-packet guards and bounded conviction allocation with synthetic tests and CLI. No broker writes.
 - Provisional shared specification and unapproved mandate template.
 - Portable weekly paper engine with ingestion, source cutoffs, sizing, calendar, persistent state, reconciliation and evaluation.
 - Synthetic tests/demonstration and GitHub review workflow.
@@ -10,7 +11,7 @@
 
 ## Not implemented or not verified
 
-1. Daily selection plus TA pipeline and four-component orchestration using the actual workshop interfaces.
+1. Daily selection plus TA pipeline and four-component orchestration using the actual workshop interfaces, including arbitrary earnings PDF ingestion, independent issuer/calendar verification and final-review snapshot production. The offline earnings helper consumes supplied normalized facts/verdicts; it does not implement these producers.
 2. Independently enforced risk-review permissions and approval records for that runtime.
 3. Complete prospective source archive and reliable authenticated quote/account snapshot producer.
 4. Broker writer, resting passive opening/owned-position closing, actual fills/cancel behavior and next-opening exit mechanism.

@@ -1,4 +1,4 @@
-"""Data-free weekly and research-protocol checks. Never places broker orders."""
+"""Data-free weekly, research-protocol and earnings checks. No broker orders."""
 from pathlib import Path
 import json
 import hashlib
@@ -25,10 +25,12 @@ def main():
     weekly_suite = unittest.defaultTestLoader.discover(str(LEGACY / "tests"), pattern="test_rev12_*.py")
     # Independent loaders avoid retaining the first suite's discovery root.
     research_suite = unittest.TestLoader().discover(str(ROOT / "tests"), pattern="test_research_protocol.py")
+    earnings_suite = unittest.TestLoader().discover(str(ROOT / "tests"), pattern="test_earnings.py")
     weekly_count, research_count = weekly_suite.countTestCases(), research_suite.countTestCases()
-    if weekly_count == 0 or research_count == 0:
+    earnings_count = earnings_suite.countTestCases()
+    if weekly_count == 0 or research_count == 0 or earnings_count == 0:
         raise RuntimeError("Portable test suite is missing; refusing an empty successful run")
-    suite = unittest.TestSuite([weekly_suite, research_suite])
+    suite = unittest.TestSuite([weekly_suite, research_suite, earnings_suite])
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         return 1
@@ -50,6 +52,17 @@ def main():
             if summary.get(flag) is not False:
                 raise ValueError("Research protocol demo must remain explicitly synthetic: " + flag)
         print(protocol_demo.stdout.strip())
+    # The CLI keeps even generated earnings packets outside the Git checkout.
+    with tempfile.TemporaryDirectory(prefix="earnings-check-", dir=ROOT.parent) as earnings_dir:
+        earnings_output = Path(earnings_dir) / "synthetic-earnings-plan.json"
+        earnings_demo = subprocess.run([sys.executable, str(ROOT / "scripts" / "earnings_plan.py"),
+            "--demo", "--output", str(earnings_output)], cwd=ROOT, check=True, capture_output=True, text=True)
+        print(earnings_demo.stdout.strip())
+        # CLI output is an explicitly synthetic prepared packet and plan, never a fill.
+        earnings_record = json.loads(earnings_output.read_text(encoding="utf-8"))
+        earnings_plan = earnings_record.get("plan", earnings_record)
+        if earnings_plan.get("mode") != "SHADOW" or earnings_plan.get("broker_writes") is not False:
+            raise ValueError("Earnings demonstration must remain SHADOW with no broker writes")
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
     committed = False
     if revision.returncode == 0:
@@ -61,6 +74,7 @@ def main():
     record = {"status":"PASSED", "tested_at_utc":datetime.now(timezone.utc).isoformat(),
         "python_version":platform.python_version(), "tests_run":result.testsRun,
         "legacy_weekly_tests_run":weekly_count, "research_protocol_tests_run":research_count,
+        "earnings_tests_run":earnings_count, "earnings_demo":"SYNTHETIC_OPERATIONAL_FIXTURE",
         "failures":len(result.failures), "errors":len(result.errors),
         "demo":"SYNTHETIC_OPERATIONAL_FIXTURE", "broker_writes":False,
         "research_protocol_demo":"SYNTHETIC_OPERATIONAL_FIXTURE",

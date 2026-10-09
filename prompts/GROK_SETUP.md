@@ -1,6 +1,6 @@
 # Grok workshop setup
 
-Use [the current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt), plus the actual daily flow, Hidden Angles and research files supplied privately. Both workshop addenda are already included; do not append them again. The previous dated workshop prompt is an archive.
+Use [the current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt), plus the actual daily flow, Hidden Angles and research files supplied privately. The workshop, research-loop and earnings addenda are already included; do not append them again. Supply intermittent earnings setup PDFs privately, and read [the earnings workflow](../docs/EARNINGS_STRATEGY.md). Sunday/Monday uploads prepare the watchlist; they do not change entry weekdays. The previous dated workshop prompt is an archive.
 
 1. Default to SHADOW. Do not call real or demo order-writing tools.
 2. Verify complete worksheet parsing, sourced TA data, timestamped quotes and persistence. State missing capabilities honestly.

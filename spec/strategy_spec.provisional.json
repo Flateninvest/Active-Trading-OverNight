@@ -1,8 +1,8 @@
 {
   "schema_status": "PROVISIONAL_NOT_WORKSHOP_VALIDATED",
-  "strategy_id": "GROK_DAILY_OVERNIGHT_v1",
+  "strategy_id": "GROK_DAILY_OVERNIGHT_v2",
   "architecture_version": "ACTIVE_TRADING_STACK_v1",
-  "selected_design_date": "2026-10-08",
+  "selected_design_date": "2026-10-09",
   "default_mode": "SHADOW",
   "live_orders_enabled": false,
   "demo_orders_enabled": false,
@@ -14,7 +14,17 @@
     "session": "PREVIOUS_COMPLETED_US_SESSION",
     "max_candidates": 10,
     "max_review_priorities": 3,
-    "after_freeze": "REMOVE_ONLY"
+    "after_freeze": "REMOVE_ONLY",
+    "combined_sleeves_share_candidate_and_priority_limits": true,
+    "sleeves": [
+      "FLOW_RESEARCH_OVERNIGHT",
+      "EARNINGS_OVERNIGHT"
+    ],
+    "source_session_by_sleeve": {
+      "FLOW_RESEARCH_OVERNIGHT": "PREVIOUS_COMPLETED_US_SESSION",
+      "EARNINGS_OVERNIGHT": "CONFIRMED_FUTURE_EVENT_FROM_PRIVATE_WATCHLIST_FREEZE_ON_ENTRY_DAY"
+    },
+    "session_applies_to": "FLOW_EVIDENCE_ONLY"
   },
   "products": {
     "direction": "LONG",
@@ -120,7 +130,9 @@
     "weekly_engine": "SEPARATE_RUNNABLE_PAPER_COMPARISON",
     "broker_writer": "NOT_IMPLEMENTED",
     "research_loop": "OFFLINE_METADATA_AND_ARTIFACT_GUARDS_ONLY",
-    "daily_frozen_dataset_backtester": "NOT_IMPLEMENTED"
+    "daily_frozen_dataset_backtester": "NOT_IMPLEMENTED",
+    "earnings_calendar_and_allocation": "OFFLINE_PREPARED_PACKET_GUARDS_WITH_SYNTHETIC_TESTS",
+    "earnings_pdf_parser_and_source_verifier": "NOT_IMPLEMENTED"
   },
   "reporting": {
     "expected_return_range": null,
@@ -146,5 +158,50 @@
     "regenerate_from_committed_code_before_numerical_report": true,
     "true_holdout_storage_isolation": "NOT_IMPLEMENTED",
     "approval_authenticity": "REQUIRES_EXTERNAL_OWNER_CONTROLLED_VERIFIER"
+  },
+  "earnings": {
+    "status": "SHADOW_DESIGN_AND_OFFLINE_HELPER_ONLY",
+    "input_cadence": "INTERMITTENT_PRIVATE_PDF_WATCHLIST",
+    "qualification": "BULLISH_UNDERLYING_SHARE_SETUP_WITH_ISSUER_CONFIRMED_RELEASE_WINDOW",
+    "numeric_flow_screen_required": false,
+    "flow_research_recorded_as": [
+      "SUPPORTING",
+      "OPPOSING",
+      "ABSENT",
+      "UNKNOWN"
+    ],
+    "all_other_common_book_gates_apply": true,
+    "event_exception": "VERIFIED_EARNINGS_RELEASE_ONLY",
+    "release_and_call_are_separate": true,
+    "issuer_sheet_conflict": "BLOCK_AND_REQUIRE_NEW_FROZEN_PLAN",
+    "amc_entry": "SAME_REGULAR_SESSION_PRECLOSE",
+    "bmo_entry": "IMMEDIATELY_PRECEDING_REGULAR_SESSION_PRECLOSE",
+    "exit": "NEXT_REGULAR_US_OPENING",
+    "illustrative_budget_usd": 2000,
+    "budget_interpretation": "EARNINGS_CEILING_WITHIN_REMAINING_SHARED_BOOK_LIMITS_NOT_ADDITIVE_CAPITAL",
+    "budget_status": "ILLUSTRATIVE_SHADOW_CONFIGURATION_NOT_CAPITAL_AUTHORITY",
+    "conviction_weights": {
+      "HIGH": 3,
+      "STANDARD": 2,
+      "CAUTIOUS": 1
+    },
+    "conviction_is_calibrated_probability": false,
+    "maximum_fraction_of_earnings_ceiling_per_name": 0.4,
+    "weight_and_cap_status": "TRANSPARENT_STARTING_POLICY_NOT_OPTIMISED",
+    "redistribute_clipped_or_rejected_allocations": false,
+    "high_beta_requires_enhanced_risk_review": true,
+    "same_instrument_across_sleeves": "ONE_CANONICAL_EXPOSURE_AND_INTENT",
+    "earnings_results_reported_separately": true,
+    "hypothesis_status": "SEPARATE_DRAFT_OWNER_REVIEW_REQUIRED",
+    "proposed_hypothesis": "Issuer-confirmed earnings setups with sourced bullish catalysts and required technical/risk review select long-stock close-to-next-open positions whose net earnings-night sleeve return exceeds a predeclared exposure-matched earnings-night control; this is unproven and must be evaluated separately from ordinary flow research.",
+    "promote_at_entry_day_morning_freeze": true,
+    "frozen_allocation_basis": [
+      "POOL_CEILING",
+      "NAV",
+      "CONVICTION_WEIGHTS",
+      "COMBINED_PRIORITIES",
+      "PER_EVENT_STAKE_CEILING"
+    ],
+    "final_allocation_never_exceeds_frozen_ceiling": true
   }
 }

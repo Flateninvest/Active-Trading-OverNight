@@ -2,7 +2,7 @@
 
 ## Portable repository checks
 
-`python scripts/validate_portable.py` runs the weekly synthetic ingestion/selection/engine tests and the offline research-protocol tests, confirms provisional JSON files can be read, and completes both synthetic demonstrations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
+`python scripts/validate_portable.py` runs the weekly synthetic ingestion/selection/engine tests and the offline research-protocol tests, confirms provisional JSON files can be read, and runs the earnings session/allocation guards and synthetic demonstrations. Earnings tests exercise supplied fictional normalized facts/verdicts, not independent source verification, general PDF parsing, actual TA or broker operations. It fetches no prices and places no real/demo broker orders. Actual results are recorded in [portable-check-result.json](portable-check-result.json), including total and separate suite counts, checkout commit and runner hash. Relevant uncommitted source is recorded explicitly and the commit is null, never invented.
 
 GitHub Actions uses the same portable command. Weekly tests provide software evidence for that comparison. Research-protocol tests challenge frozen identities/costs, correct one-change ablations, ledger replay and trial counts, owner-verifier holdout gates and committed/reproduced headline artifacts. Neither validates a daily backtester, independent agent permissions, owner signature infrastructure or profitability.
 

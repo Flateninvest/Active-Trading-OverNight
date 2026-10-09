@@ -18,7 +18,8 @@ Daily overnight-stock research for Flateninvest, with the Active Trading worksho
 
 | Part | Status |
 | --- | --- |
-| Daily shortlist strategy and Grok instructions | Documented; daily runtime remains to build |
+| Daily flow/research and earnings strategies and Grok instructions | Documented; daily integrated runtime remains to build |
+| Earnings calendar and conviction allocation | Offline prepared-packet shadow helper and synthetic tests; no PDF/TA/source verification runtime |
 | Workshop specification and mandate | Provisional specification; unapproved SHADOW mandate |
 | Weekly paper comparison | Runnable synthetic tests and demonstration in `legacy/weekly-paper/` |
 | Workshop research loop | Offline plan/ablation/ledger/holdout/reproduction gates and synthetic tests; no daily backtester |
@@ -28,7 +29,7 @@ The [change log](CHANGELOG.md) records project updates. Dated meeting packs and 
 
 ## Current daily design
 
-Use previous completed-session options flow, Hidden Angles and research. Upload at 08:00 Europe/Paris and freeze up to ten candidates at 08:15; review up to three for execution. Technical analysis is required. Buy qualifying long underlying cash/X1 stocks near Tuesday-Thursday US closes and exit at the next regular opening. Skip planned weekend and full-holiday holds.
+Use previous completed-session options flow, Hidden Angles and research for the ordinary sleeve. The [earnings sleeve](docs/EARNINGS_STRATEGY.md) also accepts intermittent private earnings PDFs, verifies AMC/BMO release windows and rechecks event-day TA/news/risk before a proposed preclose entry. Its illustrative $2,000 ceiling and conviction weights remain inside the same shared capital limits. Both sleeves use one frozen candidate register and one exposure per underlying instrument. Upload at 08:00 Europe/Paris and freeze up to ten candidates at 08:15; review up to three for execution. Technical analysis is required. Buy qualifying long underlying cash/X1 stocks near Tuesday-Thursday US closes and exit at the next regular opening. Skip planned weekend and full-holiday holds.
 
 Illustrative paper capital is $5,000, with a maximum 10% per stock, three positions and 30% gross exposure including pending orders. Account risk target 3-4 and a pause of new entries at 5 or above are proposals. Missing prerequisites leave cash. Existing holdings are protected by exact position ownership.
 
@@ -47,7 +48,7 @@ python scripts/validate_portable.py
 
 You can also use the environment's Python executable directly. The [validation record](docs/portable-check-result.json) identifies the exact previously tested source commit; CI checks each new pull request.
 
-The portable runner runs the weekly synthetic ingestion/selection/engine tests, the research-protocol tests and both synthetic demonstrations. It does not need vendor workbooks, broker credentials or paid data. Outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs this same check on pull requests and pushes to `main`.
+The portable runner runs the weekly synthetic ingestion/selection/engine tests, the research-protocol tests, earnings calendar/allocation guards and synthetic demonstrations. Try `python scripts/earnings_plan.py --demo` for a fictional prepared earnings packet and shadow plan. It does not parse the vendor PDF, calculate TA or connect to a broker. It does not need vendor workbooks, broker credentials or paid data. Outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs this same check on pull requests and pushes to `main`.
 
 The [mandatory research loop](docs/RESEARCH_LOOP.md) follows Hypothesis, Build, Ablate, Hold out and Verify, with owner preregistration before holdout access and reporting last. The [current complete Grok prompt](prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt) includes these requirements. Actual holdout dates/year and approval remain unset.
 
