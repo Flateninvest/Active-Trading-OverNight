@@ -11,6 +11,8 @@ Start here when reviewing the project for the Active Trading workshop. The selec
 | [Earnings setups](EARNINGS_STRATEGY.md) | Intermittent sheets, confirmed release windows, final review and bounded conviction stakes |
 | [Four components](FOUR_COMPONENTS.md) | Research, risk, operations and reporting responsibilities |
 | [Research loop](RESEARCH_LOOP.md) | Mandatory experimental checks, preregistration, holdout and report-last rules |
+| [Homework checklist](HOMEWORK_CHECKLIST_2026-10-09.md) and [five-minute demo](FIVE_MINUTE_DEMO.md) | Four Task 1 deliverables, eleven self-checks, due date and actual gaps |
+| [Shadow controls](SHADOW_CONTROLS.md) | Double review, fill/cost accounting, order memory and what to supply to Grok |
 | [Implementation plan](IMPLEMENTATION_PLAN.md) | What is available, what remains to build and suggested work packages |
 | [Validation evidence](VALIDATION.md) | What was actually tested and what those results establish |
 
@@ -20,15 +22,18 @@ Start here when reviewing the project for the Active Trading workshop. The selec
 | --- | --- |
 | Daily flow/research and earnings instructions | Documented; integrated daily runtime is not implemented |
 | Earnings planning helper | Offline prepared-packet schedule/allocation guards and synthetic tests |
-| Shared contracts | Provisional specification and unapproved mandate template |
+| Shared contracts | Draft operating specification and unapproved mandate; complete research homework contract/signature remain pending |
 | Weekly paper comparison | Runnable code, synthetic tests and demonstration |
 | Research-loop protocol | Offline metadata/artifact guards and synthetic demonstration; not a daily backtester or holdout security system |
-| Workshop interface compatibility | Awaiting the official reference repository and verified schemas |
+| Double review, order memory and accounting | Offline helpers; source verification, isolated services, broker integration and schedule are not deployed |
+| Task 1 specification format | Our own JSON/YAML schema required; no external template prerequisite. Any later shared interfaces are separate |
 | Live or broker-demo orders | Disabled; no broker writer is supplied |
 
-The weekly tests establish software behavior. They do not establish the daily strategy's profitability or a working daily trading bot. The passive bid/ask study is a separate proposed shadow comparison; resting order support remains unverified.
+Offline tests establish software behavior under supplied fixtures. They do not establish the daily strategy's profitability, complete homework or a working daily trading bot. The passive bid/ask study is a separate proposed shadow comparison; resting order support remains unverified.
 
 ## Further review
+
+- [Repository review](REPOSITORY_REVIEW_2026-10-09.md): organization, corrected review findings and publication boundaries for the homework/control update.
 
 - [Repository map](REPOSITORY_MAP.md): where documents, prompts, contracts and code belong.
 - [Prompt guide](../prompts/README.md) and [specification guide](../spec/README.md): current instructions and contract boundaries.

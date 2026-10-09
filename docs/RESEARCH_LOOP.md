@@ -33,7 +33,7 @@ Define applicable costs and their basis, including spread conventions and missed
 
 ## Preregistration and holdout custody
 
-The owner approves the exact plan, code, configuration and dataset identities before first holdout access. The plan includes training/validation/holdout boundaries, chronological folds, selected variant, costs/comparator, metrics, sample/failure rules and prospective extension beyond development data. Do not guess the workshop's disclosed year.
+The owner approves the exact plan, code, configuration and dataset identities before first holdout access. The plan includes training/validation/holdout boundaries, chronological folds, selected variant, costs/comparator, metrics, sample/failure rules and prospective extension beyond development data. The homework asks us to choose and freeze an untouched held-out period; do not invent dates or an owner signature.
 
 A local approval string is not an authenticated signature. Genuine use needs an externally controlled owner verifier and preserved approval receipt. The module checks that verifier's outcome and matching identities/timestamps; it does not provide the verifier's trust mechanism. Synthetic approval is valid only for a synthetic demonstration.
 
@@ -62,3 +62,9 @@ python scripts/validate_portable.py
 ```
 
 The demonstration establishes protocol behavior, not economic returns. The portable runner also retains the weekly synthetic checks. See [validation](VALIDATION.md), [the current Grok prompt](../prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt) and [implementation work still needed](IMPLEMENTATION_PLAN.md).
+
+## Task 1 homework clarification, 9 October
+
+The supplied task says we choose our JSON/YAML format and validator; no external template is a prerequisite. The exact minimum field names and the four deliverables are mapped in [the homework checklist](HOMEWORK_CHECKLIST_2026-10-09.md). Existing `PROVISIONAL_NOT_WORKSHOP_VALIDATED` values are historical local contract identifiers, not a claim that an external validator is required for this task.
+
+The offline protocol still validates declarations and result artifacts, not the complete daily research pipeline. It does not calculate the required gross/net Sharpe, turnover, break-even cost, effective trial count or deflated Sharpe, nor run the required added-year continuation with real-loader delisting/halt rows. The new [shadow controls](SHADOW_CONTROLS.md) do not fill those research gaps.

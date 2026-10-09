@@ -2,6 +2,15 @@
 
 Record material project changes here. State what changed and its scope; keep numerical evidence tied to its source commit and validation record. Proposed trading changes remain proposals until accepted through the applicable mandate process.
 
+## 2026-10-09 - Homework audit and three shadow controls
+
+- Audited the four research-homework deliverables and eleven submission checks; added an honest five-minute demo outline. Corrected the external-template prerequisite: Task 1 uses our own specification and validator.
+- Implemented exact-proposal reviewer attestations and deterministic common entry checks; reviewer identity/key separation must be configured outside the analyst environment. No model service or capital authority was added.
+- Implemented private SQLite intent/attempt/owned-fill memory, atomic cash/exposure reservations, unknown-state reconciliation and persistent next-opening exit obligations. Preserved existing shared caps, weekday rules and approval gates.
+- Implemented normalized position accounting with partial-sale basis, explicit fee correction history, unknown-net handling and separate spread/live-cost diagnostics. Added a private report command.
+- Added a combined fictional restart/partial-exit/accounting demonstration and adversarial tests to the portable gate; see [validation](docs/VALIDATION.md) for committed-source evidence.
+- Updated the complete Grok prompt and standalone controls addendum plus upload guidance. Kept historical snapshots and the weekly comparison in place. No live/demo broker writer, deployed scheduler or complete daily economic study was introduced.
+
 ## 2026-10-09 - Earnings overnight research sleeve
 
 - Added intermittent private earnings-sheet intake, issuer-confirmed release windows, entry-day freeze and final timing/TA/news/risk review to the maintained strategy and complete Grok prompt.

@@ -1,7 +1,7 @@
 {
   "schema_status": "PROVISIONAL_NOT_WORKSHOP_VALIDATED",
   "strategy_id": "GROK_DAILY_OVERNIGHT_v2",
-  "architecture_version": "ACTIVE_TRADING_STACK_v1",
+  "architecture_version": "ACTIVE_TRADING_STACK_v2_SHADOW_CONTROLS",
   "selected_design_date": "2026-10-09",
   "default_mode": "SHADOW",
   "live_orders_enabled": false,
@@ -118,6 +118,7 @@
     "publish_copier_note": false
   },
   "workshop_reference": {
+    "scope": "OPTIONAL_FUTURE_INTEROPERABILITY_NOT_A_TASK_1_PREREQUISITE",
     "repository_url": null,
     "commit": null,
     "spec_schema_verified": false,
@@ -126,19 +127,36 @@
   },
   "implementation_status": {
     "daily_selection_and_ta_runtime": "NOT_IMPLEMENTED",
-    "four_component_runtime": "INSTRUCTIONS_AND_PROVISIONAL_CONTRACT_ONLY",
+    "four_component_runtime": "OFFLINE_SHADOW_REVIEW_LEDGER_AND_ACCOUNTING_HELPERS_NOT_DEPLOYED",
     "weekly_engine": "SEPARATE_RUNNABLE_PAPER_COMPARISON",
     "broker_writer": "NOT_IMPLEMENTED",
     "research_loop": "OFFLINE_METADATA_AND_ARTIFACT_GUARDS_ONLY",
     "daily_frozen_dataset_backtester": "NOT_IMPLEMENTED",
     "earnings_calendar_and_allocation": "OFFLINE_PREPARED_PACKET_GUARDS_WITH_SYNTHETIC_TESTS",
-    "earnings_pdf_parser_and_source_verifier": "NOT_IMPLEMENTED"
+    "earnings_pdf_parser_and_source_verifier": "NOT_IMPLEMENTED",
+    "double_review": "EXACT_PACKET_HMAC_ATTESTATION_AND_DETERMINISTIC_GATES",
+    "reviewer_service_and_credential_isolation": "NOT_DEPLOYED",
+    "operating_ledger": "PRIVATE_SQLITE_SHADOW_INTENTS_OWNED_FILLS_AND_DUE_EXITS",
+    "trade_accounting": "NORMALIZED_SHADOW_OR_DEMO_FILL_PNL_AND_EXPLICIT_FEES",
+    "scheduler_and_authenticated_broker_producers": "NOT_IMPLEMENTED"
   },
   "reporting": {
     "expected_return_range": null,
     "keep_modes_and_variants_separate": true,
     "require_source_commit_input_hashes_for_derived_numbers": true,
-    "retain_cash_unfilled_failed_and_unknown_observations": true
+    "retain_cash_unfilled_failed_and_unknown_observations": true,
+    "unknown_applicable_fees": "NET_NOT_FINAL_NEVER_DEFAULT_TO_ZERO",
+    "actual_fill_spread": "ALREADY_EMBEDDED_IN_PNL_DIAGNOSTIC_NOT_SECOND_DEDUCTION",
+    "partial_sales": "PRESERVE_REMAINING_QUANTITY_AND_BASIS",
+    "modeled_live_costs": "SEPARATE_FROM_OBSERVED_DEMO_OR_SHADOW_PNL"
+  },
+  "homework_task_1": {
+    "due_before": "2026-10-15",
+    "format": "OWNER_DESIGNED_JSON_OR_YAML_WITH_OWN_VALIDATOR",
+    "minimum_required_field_names": ["hypothesis", "universe", "signal", "holding", "costs", "expected", "kill", "trials", "signed"],
+    "current_file_is_completed_homework_spec": false,
+    "status": "INCOMPLETE_UNSIGNED_RESEARCH_HARNESS_AND_METRICS_REQUIRED",
+    "order_placement_in_task": false
   },
   "research_loop": {
     "protocol_version": "WORKSHOP_RESEARCH_LOOP_v1",

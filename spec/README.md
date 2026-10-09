@@ -1,10 +1,10 @@
 # Shared specification and mandate
 
-These files describe the current intended daily design. They are provisional project contracts, pending the workshop reference repository and its actual validators.
+These files describe the current intended daily design and unfinished research plan. Task 1 explicitly asks us to design our own JSON/YAML specification and validator; no external template is provided or needed. Preserve its exact minimum field names: `hypothesis`, `universe`, `signal`, `holding`, `costs`, `expected`, `kill`, `trials`, `signed`. The present operating contract is not a completed, signed research submission.
 
 | File | Status and purpose |
 | --- | --- |
-| [strategy_spec.provisional.json](strategy_spec.provisional.json) | Daily rules, timing, proposed controls, component boundaries and implementation status; not workshop validated |
+| [strategy_spec.provisional.json](strategy_spec.provisional.json) | Daily rules, timing, proposed controls, component boundaries and implementation status; draft operating contract, not completed homework |
 | [operating_mandate.template.json](operating_mandate.template.json) | Unapproved SHADOW mandate template; account, capital, loss limits, owners and approvals remain unset |
 | [research_plan.template.json](research_plan.template.json) | Unapproved research plan; actual hashes, periods, disclosed year and evaluation choices are unset |
 
@@ -21,11 +21,11 @@ For a strategy change, update these together in the same pull request:
 
 Describe old and new values, their reason, evaluation scope and required approval. Keep historical meeting documents and research labeled by their original date. If current instructions disagree, identify the discrepancy and resolve it through review before relying on an affected rule; do not silently choose the more permissive version.
 
-The [portable check](../scripts/validate_portable.py) confirms these JSON files can be read and exercises the offline research protocol with synthetic fixtures. The unfilled research plan is deliberately not an approved runnable study. Neither check validates official workshop schema conformity or a complete daily runtime. See [the research loop](../docs/RESEARCH_LOOP.md) for approval and holdout-custody boundaries.
+The [portable check](../scripts/validate_portable.py) confirms these JSON files can be read and exercises offline helpers with synthetic fixtures. The unfilled research plan is deliberately not an approved runnable study. Neither check supplies the complete daily research figures, real-loader continuation or owner signature. See [the research loop](../docs/RESEARCH_LOOP.md) for approval and holdout-custody boundaries and [the homework checklist](../docs/HOMEWORK_CHECKLIST_2026-10-09.md) for the full submission gap.
 
-## Reference alignment
+## Homework and later interface alignment
 
-When the official repository is supplied, record its URL and exact commit, map specification/positions/log fields, and run its actual validators. Keep verification flags false until that evidence exists. Follow the [four-component contract](../docs/FOUR_COMPONENTS.md), [implementation plan](../docs/IMPLEMENTATION_PLAN.md) and [contribution guide](../CONTRIBUTING.md).
+Complete and validate our own homework contract first. Expected net Sharpe, turnover and break-even values must be ranges derived from the actual study; trial count, effective count and deflated Sharpe must agree with its full log. The owner selects the kill criterion and signs only after verification, before first untouched holdout access. Leave unresolved figures unsigned/unclaimed. If later organisers supply positions/log or other shared interfaces, record their version and validate against those separately; do not claim compatibility from a guessed schema. Follow the [four-component contract](../docs/FOUR_COMPONENTS.md), [implementation plan](../docs/IMPLEMENTATION_PLAN.md) and [contribution guide](../CONTRIBUTING.md).
 
 ## Earnings sleeve
 

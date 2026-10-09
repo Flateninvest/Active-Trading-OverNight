@@ -34,4 +34,4 @@ Readers should use the [sharing guide](docs/SHARING.md). A public viewer can sug
 
 Research experiments must also follow [the workshop loop](docs/RESEARCH_LOOP.md). Log all attempts, freeze costs and the appropriate full-model/economic comparators, and obtain real owner preregistration before opening a fresh holdout. Keep the current prompt, research policy and plan consistent. A development merge does not sign the research plan or authorize trading.
 
-Do not silently update strategy versions, approve your own policy exceptions or publish copier notes. The reference schemas and trading mandate require their own recorded acceptance.
+Do not silently update strategy versions, approve your own policy exceptions or publish copier notes. Task 1 uses our own specification and validator with the required field names. Any later external interface mapping and the trading mandate require their own recorded acceptance.

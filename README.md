@@ -2,7 +2,7 @@
 
 Daily overnight-stock research for Flateninvest, with the Active Trading workshop's research, risk, operations and reporting components.
 
-**Current status: shadow design, offline research-protocol guards and runnable weekly paper comparison. No live or broker-demo orders are enabled.** The daily shortlist and four-component architecture are specified, but their integrated runtime is not yet implemented. The retained weekly engine is a separate comparison, not proof that the daily version is working or profitable.
+**Current status: shadow design, offline research and operating controls, and a runnable weekly paper comparison. No live or broker-demo orders are enabled.** New helpers check signed review attestations, preserve order/position memory and calculate fill-based accounting. The daily data/TA pipeline, independent agent services, broker adapter and scheduler are not deployed. The retained weekly engine is a separate comparison, not proof that the daily version is working or profitable.
 
 ## Start here
 
@@ -11,6 +11,7 @@ Daily overnight-stock research for Flateninvest, with the Active Trading worksho
 | Review the project for eToro | [Reviewer guide](docs/README.md), then the [meeting pack](docs/meeting/eToro_Active_Trading_Meeting_Pack_2026-10-08.pdf) |
 | Understand the strategy and agents | [Daily strategy](docs/DAILY_STRATEGY.md) and [four components](docs/FOUR_COMPONENTS.md) |
 | Set up the research instructions | [Prompt guide](prompts/README.md) and [shared specification](spec/README.md) |
+| Review the homework and new safeguards | [Homework checklist](docs/HOMEWORK_CHECKLIST_2026-10-09.md), [five-minute demo](docs/FIVE_MINUTE_DEMO.md) and [shadow controls](docs/SHADOW_CONTROLS.md) |
 | Develop or update the project | [Repository map](docs/REPOSITORY_MAP.md), [contribution guide](CONTRIBUTING.md) and [implementation plan](docs/IMPLEMENTATION_PLAN.md) |
 | Check evidence or share access | [Validation](docs/VALIDATION.md), [data policy](docs/DATA_POLICY.md) and [sharing guide](docs/SHARING.md) |
 
@@ -23,6 +24,9 @@ Daily overnight-stock research for Flateninvest, with the Active Trading worksho
 | Workshop specification and mandate | Provisional specification; unapproved SHADOW mandate |
 | Weekly paper comparison | Runnable synthetic tests and demonstration in `legacy/weekly-paper/` |
 | Workshop research loop | Offline plan/ablation/ledger/holdout/reproduction gates and synthetic tests; no daily backtester |
+| Financial double-check | Offline reviewer attestation and deterministic gates; separate service/credential isolation remains to deploy |
+| Order memory and next-opening exits | Local durable shadow intent/owned-position helper; no broker writer or running scheduler |
+| Profit, costs and remaining shares | Offline normalized-fill/fee accounting; no automatic broker feed or full-book valuation service |
 | Live or broker-demo execution | Disabled; no broker writer supplied |
 
 The [change log](CHANGELOG.md) records project updates. Dated meeting packs and archived research preserve their original scope; they are not the source for current operating rules.
@@ -48,7 +52,7 @@ python scripts/validate_portable.py
 
 You can also use the environment's Python executable directly. The [validation record](docs/portable-check-result.json) identifies the exact previously tested source commit; CI checks each new pull request.
 
-The portable runner runs the weekly synthetic ingestion/selection/engine tests, the research-protocol tests, earnings calendar/allocation guards and synthetic demonstrations. Try `python scripts/earnings_plan.py --demo` for a fictional prepared earnings packet and shadow plan. It does not parse the vendor PDF, calculate TA or connect to a broker. It does not need vendor workbooks, broker credentials or paid data. Outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs this same check on pull requests and pushes to `main`.
+The portable runner checks the available offline modules using synthetic fixtures and demonstrations. Consult [validation evidence](docs/VALIDATION.md) for the exact suites, counts and tested source. Try `python scripts/earnings_plan.py --demo` for a fictional prepared earnings packet and shadow plan. It does not parse the vendor PDF, calculate TA or connect to a broker. It does not need vendor workbooks, broker credentials or paid data. Outcomes are invented fixtures, not historical returns or executed trades. GitHub Actions runs the same portable check on pull requests and pushes to `main`.
 
 The [mandatory research loop](docs/RESEARCH_LOOP.md) follows Hypothesis, Build, Ablate, Hold out and Verify, with owner preregistration before holdout access and reporting last. The [current complete Grok prompt](prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt) includes these requirements. Actual holdout dates/year and approval remain unset.
 
@@ -56,8 +60,8 @@ The retained full historical test suite and original rebuild need separately sup
 
 ## Managing changes
 
-Use a branch and pull request, following [CONTRIBUTING.md](CONTRIBUTING.md). Keep the current strategy, specification and effective prompt consistent; preserve dated evidence. The workshop reference repository has not been supplied: the specification and interface examples remain provisional until its exact schemas and commit are verified.
+Use a branch and pull request, following [CONTRIBUTING.md](CONTRIBUTING.md). Keep the current strategy, specification and effective prompt consistent; preserve dated evidence. Task 1 asks us to design our own JSON/YAML specification and validator with its required field names. No external reference repository is needed to start that homework. The operating contract and research plan remain drafts; a complete daily study, required statistics, continuation and genuine owner signature are still missing. Check any later shared positions/log interfaces separately if supplied.
 
 `main` is the stable version to share. Public visitors can read and download it without edit permission. Human write access is held by the owner; no outside collaborators were present in the 8 October access check. Main-branch protection requires a pull request, passing checks and resolved conversations, and blocks force pushes and deletion. See the [sharing guide](docs/SHARING.md) for the access boundaries.
 
-The repository contains no broker writer, deployed routine, secrets or authority to publish copier notes. An approved specification or passing tests alone cannot authorize trading.
+The repository contains no broker writer, deployed routine, secrets or authority to publish copier notes. An approved specification or passing tests alone cannot authorize trading. For the three controls together, run `python scripts/shadow_workflow.py --demo`. For a private normalized fill/fee packet, use `python scripts/trade_report.py --input PRIVATE.json --output NEW_PRIVATE_REPORT.json`; see [accounting](docs/TRADE_ACCOUNTING.md) for required evidence and limits.

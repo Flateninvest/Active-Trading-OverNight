@@ -4,14 +4,15 @@ These instructions describe the selected daily overnight strategy and the worksh
 
 | File | Use |
 | --- | --- |
-| [Current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt) | Effective v2 instructions, including workshop, research-loop and earnings requirements |
+| [Current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt) | Effective v2 instructions, including workshop, research-loop, earnings and shadow-control requirements |
+| [Shadow-controls addendum](Grok_Shadow_Controls_Addendum_2026-10-09.txt) | Update an existing bot for exact-context double review, durable owned-position memory and honest fill/fee accounting |
 | [Earnings addendum](Grok_Earnings_Overnight_Addendum_2026-10-09.txt) | Update an existing bot with earnings intake, release verification, final review and bounded conviction stakes |
 | [Research-loop addendum](Grok_Research_Loop_Addendum_2026-10-08.txt) | Update an existing bot with Hypothesis/Build/Ablate/Hold out/Verify and report-last requirements |
 | [Archived workshop prompt](Grok_Overnight_Stock_Bot_Prompt_Workshop_2026-10-08.txt) | Earlier 8 October snapshot; lacks the new research-loop addition |
 | [Four-component addendum](Grok_Active_Trading_Workshop_Addendum_2026-10-08.txt) | Update an older prompt with the S1-S4 architecture |
 | [Grok setup](GROK_SETUP.md) | Check parsing, data, persistence and stage capabilities before a shadow exercise |
 
-**The current complete prompt already includes all three addenda. Do not append them again.** Read the complete current prompt when reviewing effective instructions; an addendum alone is not the full strategy. The old dated workshop snapshot remains unchanged as history.
+**The current complete prompt already includes all four addenda. Do not append them again.** Read the complete current prompt when reviewing effective instructions; an addendum alone is not the full strategy. Earlier dated standalone files remain unchanged as history. The effective text incorporates the Task 1 clarification that we design our own specification/validator; no external template is a prerequisite.
 
 For a bot that can read URLs, use the [plain-text current prompt](https://raw.githubusercontent.com/Flateninvest/Active-Trading-OverNight/main/prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt). Record the exact commit used; `main` changes as the project develops. If URL reading is unavailable, download and supply the file. A public URL grants reading, not GitHub write or trading permissions.
 
@@ -26,6 +27,6 @@ The [earnings addendum](Grok_Earnings_Overnight_Addendum_2026-10-09.txt) is alre
 - Supply actual flow, Hidden Angles and research files privately under the [data policy](../docs/DATA_POLICY.md).
 - Follow the [research-loop protocol](../docs/RESEARCH_LOOP.md): log every attempt, obtain actual owner preregistration before holdout access and regenerate artifacts before accepted numerical reporting. Do not invent a signature or disclosed year.
 
-Default mode remains SHADOW. The integrated daily runtime and independently enforced four-component boundaries remain implementation work; the retained weekly engine is a separate paper comparison.
+Default mode remains SHADOW. New offline review, order-memory and accounting helpers do not supply a network LLM adapter, authoritative market facts, isolated agent services, broker writer or deployed schedule. See [shadow-control setup and upload guidance](../docs/SHADOW_CONTROLS.md). The retained weekly engine is a separate paper comparison.
 
 See the [reviewer guide](../docs/README.md), [specification guide](../spec/README.md) and [contribution guide](../CONTRIBUTING.md) for the wider context.

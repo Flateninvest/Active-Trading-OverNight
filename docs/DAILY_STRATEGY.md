@@ -2,6 +2,8 @@
 
 Current design updated 9 October 2026. The daily book has ordinary flow/research and separately identified earnings sleeves. The integrated daily runtime remains unimplemented; an offline prepared-packet earnings calendar/allocation helper is available.
 
+The [three shadow controls](SHADOW_CONTROLS.md) now add signed proposal-review checks, durable owned intent/exit memory and normalized fill/fee accounting. These local helpers strengthen the existing process without changing the thesis or enabling orders; trustworthy data producers, separate reviewer services and deployed scheduling still need implementation.
+
 ## Research and selection
 
 - Intake at 08:00 Europe/Paris, freeze at 08:15, using the previous completed US session's supplied files.
