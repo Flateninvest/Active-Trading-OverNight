@@ -6,7 +6,7 @@ Effective owner policy: **OWNER_DEMO_2026-10-10_v1**. Strategy ownership identif
 2. [The current complete Grok prompt](prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt) is the **only effective prompt**. Other dated prompts/addenda are historical and must not be appended.
 3. [The DEMO alignment record](docs/DEMO_ALIGNMENT_2026-10-10.md) explains owner decisions, APIs, regression coverage, local-build acceptance and remaining gaps.
 
-DEMO means the separately scoped eToro demo account. SHADOW is retained for historical fixtures/research, not today's trading mode. LIVE, transfers and public performance posting remain disabled. Owner-selected DEMO policy is not a genuine research holdout signature or an order approval.
+Allowed modes are **SHADOW simulation (no broker orders)** or **the existing eToro DEMO account that the owner confirms Grok already accesses**. DEMO remains the default. **Never place, modify or close trades on a real-money account.** LIVE, transfers and public performance posting remain disabled. Owner-selected DEMO policy is not a genuine research holdout signature or an order approval.
 
 The private Grok runtime must record the exact repository commit and `canonical_hash(load_policy())`, compare them with its effective local policy, and stop new entries on mismatch. Downloading a prompt does not synchronize a local build. Existing owned exit obligations survive policy updates and entry pauses.
 

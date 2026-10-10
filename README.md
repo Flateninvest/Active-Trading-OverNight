@@ -2,7 +2,7 @@
 
 Daily overnight-stock research and DEMO operating controls for Flateninvest's Active Trading workshop project.
 
-**Current owner policy: eToro DEMO only, USD 10,000 strategy allocation. LIVE is rejected.** This repository supplies offline review, planning, accounting and durable order-memory helpers. Grok's separate local trading build is reported by the owner; it has not been inspected or deployed from this repository. There is no repository broker writer, running scheduler or public performance publisher.
+**Current owner policy: SHADOW simulation or the existing eToro DEMO account Grok already accesses, USD 10,000 strategy allocation. DEMO is the default; real-money trading is prohibited and LIVE is rejected.** This repository supplies offline review, planning, accounting and durable order-memory helpers. Grok's separate local trading build is reported by the owner; it has not been inspected or deployed from this repository. There is no repository broker writer, running scheduler or public performance publisher.
 
 ## Start here
 

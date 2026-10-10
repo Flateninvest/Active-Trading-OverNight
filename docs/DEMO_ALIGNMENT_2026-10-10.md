@@ -2,6 +2,10 @@
 
 This update aligns PR #4's repository policy with the owner's stated separate Grok DEMO build. **No merge, broker writer, live trading, publishing feature, new framework or permission was added.** The local Grok build was not provided for inspection; repository changes alone cannot certify its deployment or matching behavior.
 
+## Owner clarification — SHADOW or existing DEMO only
+
+The owner confirms Grok already accesses the eToro DEMO account. Allowed operation is that existing DEMO account or SHADOW simulation without broker orders; DEMO stays the default. Never place, modify or close real-money-account trades, and never fall back to a real account if DEMO is unavailable. This wording clarification changes no policy parameters, source code, permissions or integration-verification requirements.
+
 ## Authority and scope
 
 The owner's 10 October message overrides older instructions: DEMO replaces SHADOW for current operation, USD 10,000 replaces USD 5,000, intake/freeze is 09:00 Paris, DEMO risk-score gating is off and passive execution is disabled. Reported decision times are retained as owner metadata, not invented signatures. The supplied critical review helped identify defects but is not an independently authenticated broker/build audit; the same bot reports operating the local build.
