@@ -8,6 +8,28 @@ GitHub Actions uses the same portable command. Weekly tests provide software evi
 
 The protocol demonstration uses invented return/cost data and explicitly simulated verification seams. It reports genuine-owner approval, actual committed-code verification, genuine research readiness and profitability evidence as false. A successfully exercised gate with synthetic inputs is not a real approved holdout result.
 
+## DEMO alignment checked 10 October 2026
+
+The portable runner passed **378 tests** at 15:14:02 UTC on committed source [7d425cca8c7b170480ca0e47c219fe4fab7236b5](https://github.com/Flateninvest/Active-Trading-OverNight/commit/7d425cca8c7b170480ca0e47c219fe4fab7236b5), using Python 3.12.14. Zero failures/errors; all four synthetic demonstrations completed without broker writes. The checkout remained clean after the runner. The [dated machine-readable record](validation/portable-check-2026-10-10.json) was copied explicitly into this separate evidence commit; the runner did not write it or change the older record. Its runner hash matches the exact committed Git blob.
+
+| Suite | Tests |
+| --- | ---: |
+| Retained weekly comparison | 65 |
+| Research protocol | 44 |
+| Earnings, including ten new DEMO checks | 64 |
+| Existing exact-proposal review | 21 |
+| Existing fill/fee accounting | 34 |
+| Existing order memory | 62 |
+| Existing integration/CLI | 4 |
+| New DEMO risk/equity checks | 34 |
+| New DEMO ledger checks | 16 |
+| New external-import checks | 18 |
+| New JSON/runner/manifest/prompt hygiene checks | 16 |
+
+All original 284 tests are retained; 94 regressions were added. Eleven existing fixture/assertion adjustments are listed individually with reasons in [the alignment record](DEMO_ALIGNMENT_2026-10-10.md). Adversarial cross-review additionally caught and fixed same-night pause reset, an opening timestamp used as close, understated known fill capital after incident resolution, reconciliation-event strategy collisions and the ATR/current-price enhanced-review trigger. These are software checks on supplied facts, not proof of profitability or the separate Grok build's integration.
+
+The organization check covered 26 maintained Markdown files and 237 local links before this evidence addition, with zero broken links. Historical prompt text is preserved below explicit archive labels. One current prompt and five archived TXT snapshots are enforced by tests. No dependencies or workflow permissions changed; no merge occurred.
+
 ## Additional QA checked 9 October 2026
 
 The portable runner passed **284 tests** at 14:21:40 UTC on committed source [d0f583eed3bd1774c708338f7231da6044a3ecee](https://github.com/Flateninvest/Active-Trading-OverNight/commit/d0f583eed3bd1774c708338f7231da6044a3ecee), using Python 3.12.14: 65 weekly, 44 research-protocol, 54 earnings, 21 review, 34 accounting, 62 order-memory and 4 integration/CLI checks. Zero failures/errors; all four synthetic demonstrations completed without broker writes. The historical [machine-readable record](portable-check-result.json) identifies that run and its then-current runner hash.

@@ -125,6 +125,14 @@ The following table identifies every changed/new project file in this alignment.
 | [tests/test_operations_ledger.py](../tests/test_operations_ledger.py) | Retains 62 tests (five updated assertions/semantics); no test deleted. |
 | [tests/test_tooling_hygiene.py](../tests/test_tooling_hygiene.py) | New strict JSON, safe runner output, LF/CRLF manifest and single-effective-prompt regressions. |
 
+## Committed-source result
+
+**378 tests passed**, including all 284 retained cases and 94 new regressions; four synthetic demonstrations completed with no broker writes. Tested source is `7d425cca8c7b170480ca0e47c219fe4fab7236b5`. See [the dated evidence](validation/portable-check-2026-10-10.json) and [validation details](VALIDATION.md). The following additional evidence file was published explicitly in the separate evidence commit, rather than generated into Git by the test runner.
+
+| File | Change |
+| --- | --- |
+| [docs/validation/portable-check-2026-10-10.json](validation/portable-check-2026-10-10.json) | Exact copy of the successful committed-source runner record, preserving old evidence. |
+
 ## Remaining limits
 
 No validated profitability or optimal timing is claimed. Actual daily historical research, required economic figures, real-loader continuation, untouched holdout custody/signature and exact capstone deadline remain separate work. The updated offline helpers do not authenticate supplied market/broker data, run agents, dispatch orders, deliver alerts or prove local runtime deployment. Owner-selected risk numbers are recorded policy, not invented JPMorgan/Goldman or statistically optimized defaults.
