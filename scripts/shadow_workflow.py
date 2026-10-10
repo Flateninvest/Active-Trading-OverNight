@@ -14,11 +14,12 @@ from active_trading.risk.review import (ReviewError, authorization_verifier,
     canonical_hash, review_proposal, sign_review)
 from active_trading.operations import LedgerError, ShadowLedger
 from active_trading.reporting import build_trade_report
+from active_trading.jsonio import load_json
 
 
 def run_demo():
-    fixture = json.loads((ROOT / "examples" / "shadow_review_fixture.json").read_text(encoding="utf-8"))
-    policy = json.loads((ROOT / "spec" / "strategy_spec.provisional.json").read_text(encoding="utf-8"))
+    fixture = load_json(ROOT / "examples" / "shadow_review_fixture.json")
+    policy = load_json(ROOT / "spec" / "strategy_spec.provisional.json")
     proposal, critic, calendar = fixture["proposal"], fixture["review"], fixture["calendar"]
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
     proposal.update(spec_hash=canonical_hash(policy), calendar_hash=canonical_hash(calendar), code_commit=revision)

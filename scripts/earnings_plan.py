@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from active_trading.earnings import (  # noqa: E402
     EarningsPlanningError, build_shadow_plan, synthetic_demo_packet,
 )
+from active_trading.jsonio import loads_json
 
 
 def _private_path(path: str, label: str) -> Path:
@@ -42,8 +43,7 @@ def main(argv=None) -> int:
         else:
             input_path = _private_path(args.input, "input")
             input_bytes = input_path.read_bytes()
-            packet = json.loads(input_bytes.decode("utf-8-sig"),
-                                parse_constant=lambda value: (_ for _ in ()).throw(ValueError("nonfinite JSON constant: " + value)))
+            packet = loads_json(input_bytes)
         plan = build_shadow_plan(packet)
         plan["identities"] = {"input_bytes_sha256": hashlib.sha256(input_bytes).hexdigest(),
                               "planner_source_sha256": hashlib.sha256((ROOT / "src" / "active_trading" / "earnings.py").read_bytes()).hexdigest(),

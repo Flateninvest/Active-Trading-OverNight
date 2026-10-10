@@ -1,3 +1,8 @@
+ARCHIVED — SUPERSEDED 10 OCTOBER 2026
+Historical snapshot only. Do not execute or append these instructions.
+Use CURRENT_RULES.md, the current complete prompt and the effective JSON specification.
+Original snapshot follows unchanged.
+
 EARNINGS OVERNIGHT ADDENDUM - 9 OCTOBER 2026
 Effective strategy GROK_DAILY_OVERNIGHT_v2; SHADOW only
 

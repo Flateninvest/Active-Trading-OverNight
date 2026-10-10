@@ -6,7 +6,8 @@ Start here when reviewing the project for the Active Trading workshop. The selec
 
 | Read | What it answers |
 | --- | --- |
-| [Meeting pack](meeting/eToro_Active_Trading_Meeting_Pack_2026-10-08.pdf) | Strategy overview, preparation requirements and meeting information |
+| [Current rules](../CURRENT_RULES.md) and [DEMO alignment](DEMO_ALIGNMENT_2026-10-10.md) | Effective owner policy, implementation changes and local-build acceptance |
+| [Meeting pack](meeting/eToro_Active_Trading_Meeting_Pack_2026-10-08.pdf) | Historical strategy/meeting snapshot; current rules override older parameters |
 | [Daily strategy](DAILY_STRATEGY.md) | Selection, timing, instruments, exposure and proposed risk controls |
 | [Earnings setups](EARNINGS_STRATEGY.md) | Intermittent sheets, confirmed release windows, final review and bounded conviction stakes |
 | [Four components](FOUR_COMPONENTS.md) | Research, risk, operations and reporting responsibilities |
@@ -27,9 +28,9 @@ Start here when reviewing the project for the Active Trading workshop. The selec
 | Research-loop protocol | Offline metadata/artifact guards and synthetic demonstration; not a daily backtester or holdout security system |
 | Double review, order memory and accounting | Offline helpers; source verification, isolated services, broker integration and schedule are not deployed |
 | Task 1 specification format | Our own JSON/YAML schema required; no external template prerequisite. Any later shared interfaces are separate |
-| Live or broker-demo orders | Disabled; no broker writer is supplied |
+| Execution | Owner mode DEMO in a separate reported local build; no repository broker writer; LIVE rejected |
 
-Offline tests establish software behavior under supplied fixtures. They do not establish the daily strategy's profitability, complete homework or a working daily trading bot. The passive bid/ask study is a separate proposed shadow comparison; resting order support remains unverified.
+Offline tests establish software behavior under supplied fixtures. They do not establish the daily strategy's profitability, complete homework or a working daily trading bot. Passive execution is disabled under the owner-reported interface. Read [current rules](../CURRENT_RULES.md) and [DEMO alignment](DEMO_ALIGNMENT_2026-10-10.md) before historical meeting documents.
 
 ## Further review
 

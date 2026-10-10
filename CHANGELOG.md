@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-10-10 — owner DEMO alignment (PR #4; unmerged)
+
+- Effective specification now records DEMO only for the owner's separate account/build, USD 10,000 allocation and allocation-based caps, stress/loss rules, bid-marked equity and 09:00 intake/freeze. LIVE remains rejected; no writer, permission, deployment, publishing or merge was added.
+- Review, earnings planning and durable order memory share policy limits; added scoped DEMO support, controlled incident resolution, opening preparation/retry controls and external accounting import with unknown fees preserved.
+- One current prompt replaces conflicting active addenda; dated snapshots are labeled archived.
+- Strict JSON parsing, nonmutating validation output and committed-blob/ZIP-payload hashing address tooling gaps. Regression coverage and every changed legacy test are documented in [the alignment record](docs/DEMO_ALIGNMENT_2026-10-10.md); [validation](docs/VALIDATION.md) records actual results.
+
 Record material project changes here. State what changed and its scope; keep numerical evidence tied to its source commit and validation record. Proposed trading changes remain proposals until accepted through the applicable mandate process.
 
 ## 2026-10-09 - Homework audit and three shadow controls

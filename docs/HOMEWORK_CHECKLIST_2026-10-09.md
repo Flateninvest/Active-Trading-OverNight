@@ -47,7 +47,7 @@ Suggested order: 9-10 October contract/data/baseline; 11-12 October ablations; 1
 
 ## How the three operating improvements help
 
-These improvements are **implemented as offline shadow components and covered by portable synthetic checks**. See [validation](VALIDATION.md) for the actual source commit and counts. They support the wider project; they do not replace Task 1's research evidence or constitute a deployed bot.
+These improvements are **implemented as offline components and covered by portable synthetic checks**. The 10 October [DEMO alignment](DEMO_ALIGNMENT_2026-10-10.md) updates operating policy separately from this dated research-homework assessment. See [validation](VALIDATION.md) for the actual source commit and counts. They support the wider project; they do not replace Task 1's research evidence or constitute a deployed bot.
 
 | Improvement | Useful contribution | Does not by itself establish |
 | --- | --- | --- |

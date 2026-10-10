@@ -17,13 +17,13 @@
 | New code or document | Relevant folder index, root links when useful, installation/run instructions if changed |
 | Material project update | [CHANGELOG.md](CHANGELOG.md) with its date, scope and validation summary |
 
-For strategy changes, state the old and new values, rationale, information cutoff, evaluation version and data needed. Keep daily, weekly and passive studies and prospective trials distinct. Update the standalone workshop addendum when its included section changes. Unresolved rule conflicts block reliance on the affected rule; review them explicitly.
+For strategy changes, state the old and new values, rationale, information cutoff, evaluation version and data needed. Keep daily, weekly and passive studies and prospective trials distinct. Maintain only the current complete prompt; dated addenda are archived and must not become competing effective instructions. Unresolved rule conflicts block reliance on the affected rule; review them explicitly.
 
 Keep dated meeting PDFs and historical research as snapshots. Publish a new dated artifact when replacing one, preserve the previous version and update the relevant links. Do not rewrite old evidence as though it described the new design.
 
 ## Validate and merge
 
-- Run `python scripts/validate_portable.py` for code or configuration changes. Its saved record identifies the checked commit; if relevant source is uncommitted it says so. Commit the code first, then record validation on that committed code in a separate commit when publishing new evidence.
+- Run `python scripts/validate_portable.py` for code or configuration changes. Its ignored .runtime/portable/check-result.json identifies the checked commit; if relevant source is uncommitted it says so. It must not rewrite tracked evidence; publish a separately reviewed dated record explicitly. Commit the code first, then record validation on that committed code in a separate commit when publishing new evidence.
 - For documentation-only changes, check relative links, readability and consistency. GitHub still runs the portable check on the pull request.
 - Report omitted historical checks honestly: those require separately supplied private datasets. Synthetic results do not establish profits or a completed daily runtime.
 - Protected `main` requires a pull request, a passing `synthetic-checks` result on an up-to-date branch and resolved conversations. Force pushes and deletion are blocked, including for the owner.

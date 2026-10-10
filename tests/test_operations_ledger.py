@@ -152,7 +152,7 @@ class LedgerTests(unittest.TestCase):
         with self.assertRaisesRegex(LedgerError, "expired"):
             self.attempt(intent, now="2026-10-07T19:56:00Z")
 
-    def test_demo_and_live_modes_rejected(self):
+    def test_live_and_mismatched_review_modes_rejected(self):
         for mode in ("DEMO", "LIVE"):
             with self.subTest(mode=mode), self.assertRaisesRegex(LedgerError, "SHADOW"):
                 self.register(fixture_proposal(mode=mode))
@@ -169,7 +169,7 @@ class LedgerTests(unittest.TestCase):
             self.register(fixture_proposal(instrument_id="SYNTHETIC_D"))
 
     def test_cost_reserve_included_in_per_name_cap(self):
-        with self.assertRaisesRegex(LedgerError, "10%"):
+        with self.assertRaisesRegex(LedgerError, "per-name"):
             self.register(fixture_proposal(entry_cost_reserve_usd="6", approved_notional_usd="501"))
 
     def test_invalid_notional_and_nonfinite_inputs_rejected(self):
@@ -336,8 +336,9 @@ class LedgerTests(unittest.TestCase):
     def test_exit_cannot_be_advanced_by_new_calendar_or_spec(self):
         self.bought()
         self.assertEqual(self.ledger.due_exits("2026-10-08T13:29:59Z"), [])
+        planned = self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", "2026-10-08T13:29:59Z")
         with self.assertRaisesRegex(LedgerError, "not due"):
-            self.ledger.plan_exit("SYNTHETIC_ACCOUNT", "SYNTHETIC_POSITION", "2026-10-08T13:29:59Z")
+            self.ledger.begin_attempt(planned["intent_id"], "BEFORE_OPEN", "2026-10-08T13:29:59Z")
         self.assertEqual(self.ledger.positions()[0]["exit_open"], OPEN)
 
     def test_entry_retry_cannot_extend_cutoff(self):
@@ -677,13 +678,13 @@ class LedgerTests(unittest.TestCase):
     def test_existing_snapshot_name_above_cap_blocks_new_entry(self):
         proposal = fixture_proposal(instrument_id="SYNTHETIC_B", account_snapshot={
             "available_cash_usd": "5000", "exposures": [{"instrument_id": "EXTERNAL_OWNED", "reserved_usd": "501"}]})
-        with self.assertRaisesRegex(LedgerError, "10% per-name"):
+        with self.assertRaisesRegex(LedgerError, "per-name"):
             self.register(proposal)
 
     def test_existing_local_name_above_new_nav_cap_blocks_new_entry(self):
         self.register()
         proposal = fixture_proposal(instrument_id="SYNTHETIC_B", nav_usd="4900", quantity="4", approved_notional_usd="401")
-        with self.assertRaisesRegex(LedgerError, "10% per-name"):
+        with self.assertRaisesRegex(LedgerError, "per-name"):
             self.register(proposal)
 
 

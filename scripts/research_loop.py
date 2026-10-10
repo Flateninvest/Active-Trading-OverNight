@@ -14,6 +14,7 @@ from active_trading.research.protocol import (  # noqa: E402
     canonical_hash, dataset_hashes, file_sha256, open_holdout, read_ledger,
     record_trial, trial_count, validate_plan, verify_report,
 )
+from active_trading.jsonio import load_json
 
 
 def _write(path, value):
@@ -21,7 +22,7 @@ def _write(path, value):
 
 
 def _read(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return load_json(path)
 
 
 def _synthetic_reproduce(dataset, config, output):

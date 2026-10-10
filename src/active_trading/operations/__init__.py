@@ -1,4 +1,4 @@
-"""Offline SHADOW operations helpers; never a broker connection or scheduler."""
+"""Offline DEMO/SHADOW memory; never a broker connection or scheduler."""
 
 from .ledger import LedgerError, ShadowLedger, canonical_digest, next_opening
 

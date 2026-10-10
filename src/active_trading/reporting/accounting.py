@@ -321,6 +321,13 @@ def build_trade_report(packet: dict) -> dict:
         raise AccountingError("mode: only SHADOW or DEMO accounting permitted; LIVE forbidden")
     ownership_value = _object(packet.get("ownership"), "ownership")
     ownership = {key: _text(ownership_value.get(key), "ownership." + key) for key in OWNERSHIP_KEYS}
+    strategy_scope = packet.get("strategy_scope")
+    if strategy_scope is not None:
+        strategy_scope = dict(_object(strategy_scope, "strategy_scope"))
+        override = _boolean(strategy_scope.get("external_override"), "strategy_scope.external_override")
+        include = _boolean(strategy_scope.get("include_in_strategy_equity"), "strategy_scope.include_in_strategy_equity")
+        if override and include:
+            raise AccountingError("external override must be excluded from strategy equity")
     as_of = _time(packet.get("as_of"), "as_of")
     fills, duplicate_fills = _fills(packet, ownership, mode, as_of)
     fee_by_fill, fee_history, duplicate_costs = _fees(packet, fills, ownership, mode, as_of)
@@ -393,6 +400,7 @@ def build_trade_report(packet: dict) -> dict:
         unrealized_after_entry_fees = (Decimal(unrealized_gross) - remaining_known_entry_fees
             if unrealized_gross is not None and entry_fees_complete else None)
         return {"schema_version": "TRADE_ACCOUNTING_v1", "mode": mode, "ownership": ownership,
+            "strategy_scope": strategy_scope,
             "as_of": as_of.isoformat(), "currency": "USD", "broker_writes": False,
             "evidence_authentication": "CALLER_SUPPLIED_NOT_VERIFIED_BY_ACCOUNTING",
             "accounting_method": "WEIGHTED_AVERAGE_FILL_PRICE_NOT_TAX_ACCOUNTING",

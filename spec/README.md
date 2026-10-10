@@ -1,32 +1,26 @@
 # Shared specification and mandate
 
-These files describe the current intended daily design and unfinished research plan. Task 1 explicitly asks us to design our own JSON/YAML specification and validator; no external template is provided or needed. Preserve its exact minimum field names: `hypothesis`, `universe`, `signal`, `holding`, `costs`, `expected`, `kill`, `trials`, `signed`. The present operating contract is not a completed, signed research submission.
+[Current rules](../CURRENT_RULES.md) identifies the effective owner policy. **strategy_spec.provisional.json is the single operating source of truth**; code loads it through `load_policy` and derives limits through `capital_limits`. Its provisional label concerns workshop schema/research completeness, not whether the owner has selected DEMO parameters.
 
-| File | Status and purpose |
+| File | Purpose |
 | --- | --- |
-| [strategy_spec.provisional.json](strategy_spec.provisional.json) | Daily rules, timing, proposed controls, component boundaries and implementation status; draft operating contract, not completed homework |
-| [operating_mandate.template.json](operating_mandate.template.json) | Unapproved SHADOW mandate template; account, capital, loss limits, owners and approvals remain unset |
-| [research_plan.template.json](research_plan.template.json) | Unapproved research plan; actual hashes, periods, disclosed year and evaluation choices are unset |
+| [strategy_spec.provisional.json](strategy_spec.provisional.json) | Effective DEMO allocation, selection, schedule, caps/stress/loss rules and implementation boundaries |
+| [operating_mandate.template.json](operating_mandate.template.json) | DEMO configuration template referring to that policy; private account/operators/credential approvals are configured separately |
+| [research_plan.template.json](research_plan.template.json) | Unsigned research plan; actual input hashes, holdout periods, disclosed year and approval remain unset |
 
-No real or broker-demo orders are enabled. A JSON file, passing check or risk PASS does not provide execution approval. The mandate template must never contain public account credentials or actual private position identifiers.
+DEMO is eToro demo only; LIVE is rejected. The owner reports a separate local Grok build. This repository supplies no broker writer or scheduler and does not prove that build has adopted these rules. Compare exact source commit and canonical policy hash before new entries. A review PASS, test result, JSON file or merge is not platform/broker approval.
 
-## Keep rules synchronized
+## Keep changes coherent
 
-For a strategy change, update these together in the same pull request:
+1. Update the applicable operating fields/version in the specification.
+2. Update maintained daily/earnings and implementation documentation.
+3. Update the one [current complete prompt](../prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt). Dated prompt snapshots stay archived; never maintain a competing addendum.
+4. Add meaningful regressions and record committed-source verification separately.
 
-1. The provisional specification's applicable fields and version/date.
-2. The [daily strategy](../docs/DAILY_STRATEGY.md) and relevant architecture or implementation notes.
-3. The effective [current complete Grok prompt](../prompts/Grok_Overnight_Stock_Bot_Prompt_Current.txt), including both workshop sections and corresponding standalone addenda.
-4. Applicable tests and validation evidence once an implementation exists.
+Record owner decisions and dates without inventing a signature. The strategy ownership ID stays stable across this policy revision so exits remain linked. Policy changes invalidate pending entry reviews, not existing owned exit obligations. Private identities, keys and actual trading state stay outside Git.
 
-Describe old and new values, their reason, evaluation scope and required approval. Keep historical meeting documents and research labeled by their original date. If current instructions disagree, identify the discrepancy and resolve it through review before relying on an affected rule; do not silently choose the more permissive version.
+## Research homework remains separate
 
-The [portable check](../scripts/validate_portable.py) confirms these JSON files can be read and exercises offline helpers with synthetic fixtures. The unfilled research plan is deliberately not an approved runnable study. Neither check supplies the complete daily research figures, real-loader continuation or owner signature. See [the research loop](../docs/RESEARCH_LOOP.md) for approval and holdout-custody boundaries and [the homework checklist](../docs/HOMEWORK_CHECKLIST_2026-10-09.md) for the full submission gap.
+Task 1 asks for our own JSON/YAML specification and validator, with minimum fields `hypothesis`, `universe`, `signal`, `holding`, `costs`, `expected`, `kill`, `trials`, `signed`. No external template is required. The operating policy is not a completed signed research submission.
 
-## Homework and later interface alignment
-
-Complete and validate our own homework contract first. Expected net Sharpe, turnover and break-even values must be ranges derived from the actual study; trial count, effective count and deflated Sharpe must agree with its full log. The owner selects the kill criterion and signs only after verification, before first untouched holdout access. Leave unresolved figures unsigned/unclaimed. If later organisers supply positions/log or other shared interfaces, record their version and validate against those separately; do not claim compatibility from a guessed schema. Follow the [four-component contract](../docs/FOUR_COMPONENTS.md), [implementation plan](../docs/IMPLEMENTATION_PLAN.md) and [contribution guide](../CONTRIBUTING.md).
-
-## Earnings sleeve
-
-The current v2 strategy adds EARNINGS_OVERNIGHT alongside FLOW_RESEARCH_OVERNIGHT. Its earnings ceiling, ordinal conviction weights and extra name cap are illustrative shadow policy inside the existing common limits. See [the earnings strategy](../docs/EARNINGS_STRATEGY.md) for release verification, final-review requirements and the offline helper boundary. A code merge or this provisional configuration does not approve a trading mandate.
+The [portable check](../scripts/validate_portable.py) strictly decodes JSON (duplicate keys/nonfinite values refused) and tests synthetic behavior. It does not produce the daily economic harness, genuine Sharpe/turnover/break-even/deflated Sharpe, real-loader continuation or owner signature. Keep the genuine holdout unopened until externally verified owner preregistration; see [research loop](../docs/RESEARCH_LOOP.md) and [homework checklist](../docs/HOMEWORK_CHECKLIST_2026-10-09.md). Validate any later organiser-supplied shared interfaces separately.

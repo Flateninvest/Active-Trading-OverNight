@@ -8,6 +8,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from active_trading.reporting.accounting import AccountingError, build_trade_report
+from active_trading.reporting.imports import import_demo_trade
+from active_trading.jsonio import load_json, loads_json
 
 
 def _private(value):
@@ -17,26 +19,27 @@ def _private(value):
     return path
 
 
-def _unique_object(pairs):
-    result = {}
-    for key, value in pairs:
-        if key in result:
-            raise ValueError("Duplicate JSON object key")
-        result[key] = value
-    return result
-
-
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", required=True, help="Private normalized accounting JSON")
     parser.add_argument("--output", required=True, help="New private report JSON; never overwritten")
+    parser.add_argument("--import-demo", action="store_true", help="Normalize one external DEMO observation; previews are not fills")
+    parser.add_argument("--previous-packet", help="Previous private import report or normalized packet; append without rewriting it")
     args = parser.parse_args(argv)
     try:
         source, output = _private(args.input), _private(args.output)
         raw = source.read_bytes()
-        packet = json.loads(raw.decode("utf-8-sig"), object_pairs_hook=_unique_object,
-            parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
+        packet = loads_json(raw)
+        if args.previous_packet and not args.import_demo:
+            raise AccountingError("--previous-packet requires --import-demo")
+        if args.import_demo:
+            previous = load_json(_private(args.previous_packet)) if args.previous_packet else None
+            if isinstance(previous, dict) and "normalized_accounting_packet" in previous:
+                previous = previous["normalized_accounting_packet"]
+            packet = import_demo_trade(packet, previous_packet=previous, source_bytes=raw)
         report = build_trade_report(packet)
+        if args.import_demo:
+            report["normalized_accounting_packet"] = packet
         report["identities"] = {"input_bytes_sha256": hashlib.sha256(raw).hexdigest(),
             "accounting_source_sha256": hashlib.sha256((ROOT / "src" / "active_trading" / "reporting" / "accounting.py").read_bytes()).hexdigest(),
             "committed_source_verified": False}
