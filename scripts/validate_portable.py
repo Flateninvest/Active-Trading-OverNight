@@ -1,5 +1,6 @@
-"""Data-free weekly, research-protocol and earnings checks. No broker orders."""
+"""Data-free weekly, research, earnings and shadow-control checks. No orders."""
 from pathlib import Path
+import argparse
 import json
 import hashlib
 from datetime import datetime, timezone
@@ -12,10 +13,42 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 LEGACY = ROOT / "legacy" / "weekly-paper"
+sys.path.insert(0, str(ROOT / "src"))
+from active_trading.jsonio import load_json, loads_json
 
-def main():
+
+def _output_path(value=None):
+    path = Path(value).expanduser().resolve() if value else ROOT / ".runtime" / "portable" / "check-result.json"
+    if ".git" in path.parts:
+        raise ValueError("Validation output cannot use Git metadata")
+    if not path.parent.exists():
+        if value:
+            raise ValueError("Explicit output parent must already exist")
+        path.parent.mkdir(parents=True, exist_ok=True)
+    tracked = subprocess.run(["git", "ls-files", "--error-unmatch", "--", path.name],
+        cwd=path.parent, capture_output=True, text=True)
+    if tracked.returncode == 0:
+        raise ValueError("Validation must never rewrite a tracked file")
+    if value and path.exists():
+        raise ValueError("Explicit output must be a new file")
+    return path
+
+
+def save_record(record, output=None):
+    """Save generated evidence outside tracked history; explicit files are new."""
+    path = _output_path(output)
+    with path.open("x" if output else "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(record, indent=2, allow_nan=False) + "\n")
+    return path
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", help="Optional new untracked validation record; tracked files are always refused")
+    args = parser.parse_args(argv)
+    # Refuse an unsafe output before running any tests or demonstrations.
+    _output_path(args.output)
     for path in (ROOT / "spec").glob("*.json"):
-        json.loads(path.read_text(encoding="utf-8"))
+        load_json(path)
     temporary = ROOT / ".runtime" / "portable"
     temporary.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(temporary)
@@ -26,11 +59,17 @@ def main():
     # Independent loaders avoid retaining the first suite's discovery root.
     research_suite = unittest.TestLoader().discover(str(ROOT / "tests"), pattern="test_research_protocol.py")
     earnings_suite = unittest.TestLoader().discover(str(ROOT / "tests"), pattern="test_earnings.py")
+    shadow_suites = [unittest.TestLoader().discover(str(ROOT / "tests"), pattern=pattern) for pattern in (
+        "test_review.py", "test_accounting.py", "test_operations_ledger.py", "test_shadow_workflow.py")]
+    demo_patterns = ("test_demo_risk.py", "test_demo_ledger.py", "test_demo_imports.py", "test_tooling_hygiene.py")
+    demo_suites = [unittest.TestLoader().discover(str(ROOT / "tests"), pattern=pattern) for pattern in demo_patterns]
     weekly_count, research_count = weekly_suite.countTestCases(), research_suite.countTestCases()
     earnings_count = earnings_suite.countTestCases()
-    if weekly_count == 0 or research_count == 0 or earnings_count == 0:
+    shadow_counts = [suite.countTestCases() for suite in shadow_suites]
+    demo_counts = [suite.countTestCases() for suite in demo_suites]
+    if weekly_count == 0 or research_count == 0 or earnings_count == 0 or any(count == 0 for count in [*shadow_counts, *demo_counts]):
         raise RuntimeError("Portable test suite is missing; refusing an empty successful run")
-    suite = unittest.TestSuite([weekly_suite, research_suite, earnings_suite])
+    suite = unittest.TestSuite([weekly_suite, research_suite, earnings_suite, *shadow_suites, *demo_suites])
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         return 1
@@ -38,13 +77,13 @@ def main():
         completed = subprocess.run([sys.executable, "-m", "weekly_strategy.cli", "demo", "--output", demo_dir],
             cwd=LEGACY, check=True, capture_output=True, text=True)
         print(completed.stdout.strip())
-        comparison = json.loads((Path(demo_dir) / "Synthetic_Demonstration_Comparison.json").read_text())
+        comparison = load_json(Path(demo_dir) / "Synthetic_Demonstration_Comparison.json")
         if comparison["profitability_evidence"] is not False:
             raise ValueError("Demonstration must remain explicitly synthetic")
     with tempfile.TemporaryDirectory(dir=temporary) as protocol_dir:
         protocol_demo = subprocess.run([sys.executable, str(ROOT / "scripts" / "research_loop.py"),
             "demo", "--output", protocol_dir], cwd=ROOT, check=True, capture_output=True, text=True)
-        summary = json.loads(protocol_demo.stdout)
+        summary = loads_json(protocol_demo.stdout)
         if summary.get("status") != "SYNTHETIC_OPERATIONAL_FIXTURE" or summary.get("fixture_guard_checks_passed") is not True:
             raise ValueError("Research protocol demonstration did not complete its fixture checks")
         for flag in ("profitability_evidence", "broker_writes", "report_ready_for_genuine_research",
@@ -59,14 +98,24 @@ def main():
             "--demo", "--output", str(earnings_output)], cwd=ROOT, check=True, capture_output=True, text=True)
         print(earnings_demo.stdout.strip())
         # CLI output is an explicitly synthetic prepared packet and plan, never a fill.
-        earnings_record = json.loads(earnings_output.read_text(encoding="utf-8"))
+        earnings_record = load_json(earnings_output)
         earnings_plan = earnings_record.get("plan", earnings_record)
         if earnings_plan.get("mode") != "SHADOW" or earnings_plan.get("broker_writes") is not False:
             raise ValueError("Earnings demonstration must remain SHADOW with no broker writes")
+    shadow_demo = subprocess.run([sys.executable, str(ROOT / "scripts" / "shadow_workflow.py"), "--demo"],
+        cwd=ROOT, check=True, capture_output=True, text=True)
+    shadow_summary = loads_json(shadow_demo.stdout)
+    if (shadow_summary.get("status") != "SYNTHETIC_OPERATIONAL_FIXTURE"
+            or shadow_summary.get("broker_writes") is not False
+            or shadow_summary.get("profitability_evidence") is not False
+            or not shadow_summary.get("checks")
+            or not all(value is True for value in shadow_summary["checks"].values())):
+        raise ValueError("Shadow controls demonstration must remain fictional and pass its checks")
+    print(shadow_demo.stdout.strip())
     revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
     committed = False
     if revision.returncode == 0:
-        source_paths = ["scripts", "src", "tests", "legacy", "spec", ".github/workflows"]
+        source_paths = ["scripts", "src", "tests", "examples", "legacy", "spec", ".github/workflows"]
         changed = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", *source_paths], cwd=ROOT)
         untracked = subprocess.run(["git", "ls-files", "--others", "--exclude-standard", *source_paths],
             cwd=ROOT, capture_output=True, text=True)
@@ -75,14 +124,19 @@ def main():
         "python_version":platform.python_version(), "tests_run":result.testsRun,
         "legacy_weekly_tests_run":weekly_count, "research_protocol_tests_run":research_count,
         "earnings_tests_run":earnings_count, "earnings_demo":"SYNTHETIC_OPERATIONAL_FIXTURE",
+        "shadow_review_tests_run":shadow_counts[0], "trade_accounting_tests_run":shadow_counts[1],
+        "order_memory_tests_run":shadow_counts[2], "shadow_integration_tests_run":shadow_counts[3],
+        "demo_alignment_test_counts":dict(zip(demo_patterns, demo_counts)),
+        "shadow_controls_demo":"SYNTHETIC_OPERATIONAL_FIXTURE",
         "failures":len(result.failures), "errors":len(result.errors),
         "demo":"SYNTHETIC_OPERATIONAL_FIXTURE", "broker_writes":False,
         "research_protocol_demo":"SYNTHETIC_OPERATIONAL_FIXTURE",
         "daily_runtime_validated":False, "private_data_required":False,
+        "independent_reviewer_service_deployed":False, "broker_producers_authenticated":False,
         "commit":revision.stdout.strip() if committed else None,
         "source_state":"COMMITTED" if committed else "WORKTREE_NOT_COMMITTED",
         "runner_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
-    (ROOT / "docs" / "portable-check-result.json").write_text(json.dumps(record, indent=2)+"\n", encoding="utf-8")
+    save_record(record, args.output)
     print(json.dumps(record, indent=2))
     return 0
 

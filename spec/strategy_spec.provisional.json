@@ -1,16 +1,16 @@
 {
   "schema_status": "PROVISIONAL_NOT_WORKSHOP_VALIDATED",
   "strategy_id": "GROK_DAILY_OVERNIGHT_v2",
-  "architecture_version": "ACTIVE_TRADING_STACK_v1",
-  "selected_design_date": "2026-10-09",
-  "default_mode": "SHADOW",
+  "architecture_version": "ACTIVE_TRADING_STACK_v3_DEMO_CONTROLS",
+  "selected_design_date": "2026-10-10",
+  "default_mode": "DEMO",
   "live_orders_enabled": false,
-  "demo_orders_enabled": false,
+  "demo_orders_enabled": true,
   "selection": {
     "cadence": "DAILY",
     "local_timezone": "Europe/Paris",
-    "input_time": "08:00",
-    "freeze_time": "08:15",
+    "input_time": "09:00",
+    "freeze_time": "09:00",
     "session": "PREVIOUS_COMPLETED_US_SESSION",
     "max_candidates": 10,
     "max_review_priorities": 3,
@@ -72,25 +72,41 @@
     "cutoff_minutes_before_regular_close": 1,
     "exit": "NEXT_REGULAR_US_OPENING",
     "skip_weekend_or_full_holiday_bridge": true,
-    "derive_from_exchange_calendar": true
+    "derive_from_exchange_calendar": true,
+    "exit_prepare_minutes_before_open": 5,
+    "exit_first_attempt": "EXACT_REGULAR_OPENING",
+    "exit_retry_seconds": 5,
+    "exit_alert_after_attempts": 12,
+    "exit_retry_requires_fresh_reconciliation": true,
+    "exit_by_exact_owned_position_id": true,
+    "clock_examples_are_not_schedule_authority": true
   },
   "risk": {
-    "illustrative_capital_usd": 5000,
     "maximum_name_weight": 0.1,
     "maximum_positions": 3,
     "maximum_gross_weight_including_pending": 0.3,
-    "proposed_account_score_target": [
-      3,
-      4
-    ],
     "pause_new_entries_at_score": 5,
     "maximum_quote_age_seconds": 60,
     "maximum_spread_bps": 20,
     "monday_reference_ask_band_fraction": 0.02,
     "reference_max_age_calendar_days": 4,
     "missing_monday_reference": "BLOCK_ENTRY",
-    "dollar_loss_limit": null,
-    "drawdown_limit": null
+    "strategy_allocation_usd": 10000,
+    "capital_basis": "MIN_STRATEGY_ALLOCATION_AND_ACCOUNT_BALANCE",
+    "position_overnight_risk_fraction": 0.0025,
+    "single_night_loss_fraction": 0.01,
+    "drawdown_fraction": 0.05,
+    "account_risk_score_gate_by_mode": {
+      "DEMO": false,
+      "SHADOW": true
+    },
+    "real_account_score_allowed": false,
+    "enhanced_review_beta_threshold": 1.5,
+    "enhanced_review_atr_fraction": 0.04,
+    "drawdown_resume": "VERIFIED_OWNER_REVIEW_REQUIRED",
+    "stress_scenario": "MAX_2_ATR14_OVER_CLOSE_AND_MAX_ABSOLUTE_60_SESSION_OVERNIGHT_GAP_PLUS_COSTS",
+    "stress_gap_sessions": 60,
+    "earnings_stress_confirmed_releases": 8
   },
   "ownership": {
     "adopt_preexisting_positions": false,
@@ -102,14 +118,16 @@
     "actual_protected_position_ids": null
   },
   "passive_execution": {
-    "study_mode": "SEPARATE_SHADOW_COMPARISON",
-    "resting_open_support": "UNVERIFIED",
-    "resting_close_support": "UNVERIFIED",
+    "study_mode": "DISABLED",
+    "resting_open_support": "NOT_AVAILABLE_IN_REPORTED_ETORO_MIT_INTERFACE",
+    "resting_close_support": "NOT_AVAILABLE_IN_REPORTED_ETORO_INTERFACE",
     "unfilled_entry": "CASH",
     "quote_touch_proves_fill": false,
     "passive_exit_enabled": false,
     "passive_exit_wait_seconds": null,
-    "fallback_policy": null
+    "fallback_policy": null,
+    "enabled": false,
+    "reason": "OWNER_DISABLED_MARKET_IF_TOUCHED_IS_NOT_RESTING_LIMIT"
   },
   "approval": {
     "risk_pass_is_execution_approval": false,
@@ -118,6 +136,7 @@
     "publish_copier_note": false
   },
   "workshop_reference": {
+    "scope": "OPTIONAL_FUTURE_INTEROPERABILITY_NOT_A_TASK_1_PREREQUISITE",
     "repository_url": null,
     "commit": null,
     "spec_schema_verified": false,
@@ -126,19 +145,53 @@
   },
   "implementation_status": {
     "daily_selection_and_ta_runtime": "NOT_IMPLEMENTED",
-    "four_component_runtime": "INSTRUCTIONS_AND_PROVISIONAL_CONTRACT_ONLY",
+    "four_component_runtime": "OFFLINE_DEMO_COMPATIBLE_HELPERS_EXTERNAL_GROK_BUILD_NOT_VERIFIED",
     "weekly_engine": "SEPARATE_RUNNABLE_PAPER_COMPARISON",
     "broker_writer": "NOT_IMPLEMENTED",
     "research_loop": "OFFLINE_METADATA_AND_ARTIFACT_GUARDS_ONLY",
     "daily_frozen_dataset_backtester": "NOT_IMPLEMENTED",
     "earnings_calendar_and_allocation": "OFFLINE_PREPARED_PACKET_GUARDS_WITH_SYNTHETIC_TESTS",
-    "earnings_pdf_parser_and_source_verifier": "NOT_IMPLEMENTED"
+    "earnings_pdf_parser_and_source_verifier": "NOT_IMPLEMENTED",
+    "double_review": "EXACT_PACKET_HMAC_ATTESTATION_ALLOCATION_STRESS_LOSS_AND_DRAWDOWN_GATES",
+    "reviewer_service_and_credential_isolation": "NOT_DEPLOYED",
+    "operating_ledger": "PRIVATE_SQLITE_SHADOW_AND_DEMO_INTENTS_OWNED_FILLS_AND_DUE_EXITS",
+    "trade_accounting": "NORMALIZED_SHADOW_OR_DEMO_FILL_PNL_AND_EXPLICIT_FEES",
+    "scheduler_and_authenticated_broker_producers": "NOT_IMPLEMENTED"
   },
   "reporting": {
     "expected_return_range": null,
     "keep_modes_and_variants_separate": true,
     "require_source_commit_input_hashes_for_derived_numbers": true,
-    "retain_cash_unfilled_failed_and_unknown_observations": true
+    "retain_cash_unfilled_failed_and_unknown_observations": true,
+    "unknown_applicable_fees": "NET_NOT_FINAL_NEVER_DEFAULT_TO_ZERO",
+    "actual_fill_spread": "ALREADY_EMBEDDED_IN_PNL_DIAGNOSTIC_NOT_SECOND_DEDUCTION",
+    "partial_sales": "PRESERVE_REMAINING_QUANTITY_AND_BASIS",
+    "modeled_live_costs": "SEPARATE_FROM_OBSERVED_DEMO_OR_SHADOW_PNL",
+    "strategy_equity_start_usd": 10000,
+    "equity_mark": "BID",
+    "high_water_mark": "CASH_FLOW_ADJUSTED",
+    "excluded_from_strategy_equity": [
+      "2026-10-08_OKTA_EXTERNAL_OVERRIDE"
+    ],
+    "external_trade_import": "DEMO_NORMALIZED_FINAL_HISTORY_ONLY_FEES_UNKNOWN_UNTIL_CONFIRMED"
+  },
+  "homework_task_1": {
+    "due_before": "2026-10-15",
+    "format": "OWNER_DESIGNED_JSON_OR_YAML_WITH_OWN_VALIDATOR",
+    "minimum_required_field_names": [
+      "hypothesis",
+      "universe",
+      "signal",
+      "holding",
+      "costs",
+      "expected",
+      "kill",
+      "trials",
+      "signed"
+    ],
+    "current_file_is_completed_homework_spec": false,
+    "status": "INCOMPLETE_UNSIGNED_RESEARCH_HARNESS_AND_METRICS_REQUIRED",
+    "order_placement_in_task": false
   },
   "research_loop": {
     "protocol_version": "WORKSHOP_RESEARCH_LOOP_v1",
@@ -160,7 +213,7 @@
     "approval_authenticity": "REQUIRES_EXTERNAL_OWNER_CONTROLLED_VERIFIER"
   },
   "earnings": {
-    "status": "SHADOW_DESIGN_AND_OFFLINE_HELPER_ONLY",
+    "status": "DEMO_POLICY_WITH_OFFLINE_PREPARED_PACKET_HELPER",
     "input_cadence": "INTERMITTENT_PRIVATE_PDF_WATCHLIST",
     "qualification": "BULLISH_UNDERLYING_SHARE_SETUP_WITH_ISSUER_CONFIRMED_RELEASE_WINDOW",
     "numeric_flow_screen_required": false,
@@ -179,7 +232,7 @@
     "exit": "NEXT_REGULAR_US_OPENING",
     "illustrative_budget_usd": 2000,
     "budget_interpretation": "EARNINGS_CEILING_WITHIN_REMAINING_SHARED_BOOK_LIMITS_NOT_ADDITIVE_CAPITAL",
-    "budget_status": "ILLUSTRATIVE_SHADOW_CONFIGURATION_NOT_CAPITAL_AUTHORITY",
+    "budget_status": "OWNER_DEMO_CEILING_WITHIN_SHARED_CAPS_NOT_ADDITIVE_CAPITAL",
     "conviction_weights": {
       "HIGH": 3,
       "STANDARD": 2,
@@ -203,5 +256,23 @@
       "PER_EVENT_STAKE_CEILING"
     ],
     "final_allocation_never_exceeds_frozen_ceiling": true
+  },
+  "policy_version": "OWNER_DEMO_2026-10-10_v1",
+  "supported_modes": [
+    "SHADOW",
+    "DEMO"
+  ],
+  "repository_broker_writer_enabled": false,
+  "owner_decisions": {
+    "recorded_in_repository_on": "2026-10-10",
+    "source": "OWNER_MESSAGE_2026-10-10",
+    "reported_decisions_paris": {
+      "allocation": "2026-10-08T18:00:00+02:00",
+      "demo_mode": "2026-10-09T16:27:00+02:00",
+      "demo_score_gate_dropped": "2026-10-09T16:31:00+02:00",
+      "stress_sizing": "2026-10-09T17:30:00+02:00"
+    },
+    "scope": "DEMO_ONLY_NOT_LIVE_OR_RESEARCH_HOLDOUT_SIGNATURE",
+    "local_grok_build_reported_by_owner": "SEPARATE_BUILD_NOT_INSPECTED_BY_REPOSITORY_MAINTAINER"
   }
 }

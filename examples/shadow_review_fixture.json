@@ -1,0 +1,55 @@
+{
+  "fixture_kind": "SYNTHETIC_OPERATIONAL_FIXTURE",
+  "profitability_evidence": false,
+  "now": "2026-10-08T19:55:00Z",
+  "proposal": {
+    "proposal_id": "fictional-proposal-1", "mode": "SHADOW",
+    "account_id": "fictional-shadow-account", "strategy_id": "GROK_DAILY_OVERNIGHT_v2",
+    "instrument_id": "fictional-instrument-1", "analyst_id": "fictional-analyst",
+    "sleeve": "FLOW_RESEARCH_OVERNIGHT", "entry_session": "2026-10-08",
+    "side": "BUY", "product": "UNDERLYING_REAL", "leverage": 1, "currency": "USD",
+    "quantity": "4", "entry_price_limit": "100.05", "entry_cost_reserve_usd": "1.00",
+    "approved_notional_usd": "401.20", "nav_usd": "5000",
+    "entry_not_before": "2026-10-08T19:30:00Z",
+    "entry_cutoff": "2026-10-08T19:59:00Z", "exit_open": "2026-10-09T13:30:00Z",
+    "spec_hash": "RESOLVE_FROM_CHECKED_OUT_SPEC", "code_commit": "RESOLVE_FROM_CHECKED_OUT_COMMIT",
+    "input_hashes": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+    "calendar_hash": "RESOLVE_FROM_SYNTHETIC_CALENDAR",
+    "frozen_register_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "in_frozen_register": true, "protected_or_unrelated_position": false,
+    "high_beta_or_volatile": false,
+    "quote": {"bid": "99.95", "ask": "100.05", "observed_at": "2026-10-08T19:55:00Z", "source": "INVENTED_FIXTURE"},
+    "costs": {"status": "KNOWN", "per_instrument": true, "instrument_id": "fictional-instrument-1",
+      "source": "INVENTED_COST_ASSUMPTION_NOT_ETORO_FEES", "estimated_total_usd": "1.00",
+      "model_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+    "account_snapshot": {"account_id": "fictional-shadow-account", "mode": "SHADOW", "source": "INVENTED_FIXTURE",
+      "observed_at": "2026-10-08T19:55:00Z", "reconciled": true, "nav_usd": "5000",
+      "available_cash_usd": "5000", "broker_risk_score": "3", "exposures": []},
+    "monday_reference": {"date": "2026-10-05", "close": "100", "source": "INVENTED_FIXTURE"}
+  },
+  "review": {
+    "schema": "DOUBLE_REVIEW_v1", "review_id": "fictional-review-1", "mode": "SHADOW",
+    "reviewer_id": "fictional-reviewer", "proposal_digest": "RESOLVE_AFTER_PROPOSAL_FREEZE",
+    "decision": "PASS", "reviewed_at": "2026-10-08T19:55:00Z", "valid_until": "2026-10-08T19:56:00Z",
+    "checks": {
+      "source_quality": {"status": "PASS", "evidence": ["INVENTED_SOURCE_FACTS"]},
+      "thesis": {"status": "PASS", "evidence": ["INVENTED_THESIS"]},
+      "ta": {"status": "PASS", "evidence": ["INVENTED_TA_NOT_COMPUTED"]},
+      "calendar_events": {"status": "PASS", "evidence": ["INVENTED_CALENDAR"]},
+      "costs_liquidity": {"status": "PASS", "evidence": ["INVENTED_COSTS_AND_QUOTE"]},
+      "ownership_account": {"status": "PASS", "evidence": ["INVENTED_RECONCILIATION"]},
+      "risk_exposure": {"status": "PASS", "evidence": ["INVENTED_NAV_AND_SCORE"]}
+    }
+  },
+  "calendar": {
+    "calendar_id": "fictional-us-regular-sessions", "source": "INVENTED_FIXTURE",
+    "observed_at": "2026-10-08T19:00:00Z", "complete_from": "2026-10-05", "complete_through": "2026-10-09",
+    "sessions": [
+      {"date": "2026-10-05", "open": "2026-10-05T13:30:00Z", "close": "2026-10-05T20:00:00Z"},
+      {"date": "2026-10-06", "open": "2026-10-06T13:30:00Z", "close": "2026-10-06T20:00:00Z"},
+      {"date": "2026-10-07", "open": "2026-10-07T13:30:00Z", "close": "2026-10-07T20:00:00Z"},
+      {"date": "2026-10-08", "open": "2026-10-08T13:30:00Z", "close": "2026-10-08T20:00:00Z"},
+      {"date": "2026-10-09", "open": "2026-10-09T13:30:00Z", "close": "2026-10-09T20:00:00Z"}
+    ]
+  }
+}

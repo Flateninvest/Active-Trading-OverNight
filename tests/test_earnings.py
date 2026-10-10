@@ -1,5 +1,6 @@
 """Synthetic safety and accounting checks; never market/backtest evidence."""
 from copy import deepcopy
+from datetime import date, timedelta
 from decimal import Decimal
 import json
 from pathlib import Path
@@ -160,7 +161,8 @@ class EarningsAllocationTests(unittest.TestCase):
         packet = one_event(uncapped_packet())
         packet["combined_review"]["ordinary_reviewed_tickers"] = ["ORDINARY"]
         packet["account"]["ordinary_proposals"] = [{"ticker": "ORDINARY", "notional_usd": "1000", "sleeve": "ORDINARY"}]
-        packet["account"]["holdings"] = [{"ticker": "EXISTING", "notional_usd": "1500", "sleeve": "OTHER"}]
+        packet["account"]["holdings"] = [{"ticker": "EXISTING", "notional_usd": "1000", "sleeve": "OTHER"}]
+        packet["account"]["cost_reserve_usd"] = "500"
         plan = build_shadow_plan(packet)
         self.assertEqual(plan["allocation_pool_usd"], "500.00")
         self.assertEqual(amounts(plan)["SYNTHA"], Decimal("500"))
@@ -169,7 +171,7 @@ class EarningsAllocationTests(unittest.TestCase):
         packet = one_event(uncapped_packet())
         packet["combined_review"]["ordinary_reviewed_tickers"] = ["ORDINARY"]
         packet["account"]["ordinary_proposals"] = [{"ticker": "ORDINARY", "notional_usd": "1000.01", "sleeve": "ORDINARY"}]
-        with self.assertRaisesRegex(EarningsPlanningError, "10% NAV/name"):
+        with self.assertRaisesRegex(EarningsPlanningError, "allocation-based name cap"):
             build_shadow_plan(packet)
 
     def test_existing_positions_leave_only_available_slot_without_redistribution(self):
@@ -191,7 +193,8 @@ class EarningsAllocationTests(unittest.TestCase):
             with self.subTest(field=field):
                 packet = one_event(uncapped_packet())
                 packet["account"].update(equity_usd="100000", uncommitted_buying_power_usd="100000")
-                packet["account"][field] = [{"ticker": "ALREADY", "notional_usd": "1500", "sleeve": "EARNINGS"}]
+                packet["account"][field] = [{"ticker": "ALREADY", "notional_usd": "1000", "sleeve": "EARNINGS"},
+                                             {"ticker": "ANOTHER", "notional_usd": "500", "sleeve": "EARNINGS"}]
                 plan = build_shadow_plan(packet)
                 self.assertEqual(plan["remaining_earnings_budget_usd"], "500.00")
                 self.assertEqual(amounts(plan), {"SYNTHA": Decimal("500")})
@@ -236,8 +239,8 @@ class EarningsAllocationTests(unittest.TestCase):
             self.assertFalse(row["options"])
             self.assertFalse(row["cfds"])
             self.assertFalse(row["shorts"])
-        packet["mode"] = "DEMO"
-        with self.assertRaisesRegex(EarningsPlanningError, "only SHADOW"):
+        packet["mode"] = "LIVE"
+        with self.assertRaisesRegex(EarningsPlanningError, "LIVE is rejected"):
             build_shadow_plan(packet)
 
     def test_duplicate_event_or_ticker_is_refused(self):
@@ -284,7 +287,7 @@ class EarningsAllocationTests(unittest.TestCase):
         self.assertEqual(build_shadow_plan(packet)["proposals"], [])
 
     def test_pre_freeze_receipt_and_publication_chronology(self):
-        for field, value in (("received_at", "2026-10-07T07:00:00Z"), ("published_at", "2026-10-05T07:00:00Z")):
+        for field, value in (("received_at", "2026-10-07T07:00:01Z"), ("published_at", "2026-10-05T07:00:00Z")):
             with self.subTest(field=field):
                 packet = uncapped_packet()
                 packet["source_receipts"][0][field] = value
@@ -294,7 +297,7 @@ class EarningsAllocationTests(unittest.TestCase):
     def test_wrong_freeze_timezone_or_new_unregistered_event_is_refused(self):
         packet = uncapped_packet()
         packet["combined_review"]["morning_freeze_at"] = "2026-10-07T08:15:00Z"
-        with self.assertRaisesRegex(EarningsPlanningError, "08:15"):
+        with self.assertRaisesRegex(EarningsPlanningError, "09:00"):
             build_shadow_plan(packet)
         packet = uncapped_packet()
         packet["combined_review"]["earnings_reviewed_event_ids"] = ["SYNTH_A", "SYNTH_B"]
@@ -345,6 +348,136 @@ class EarningsFinalReviewTests(unittest.TestCase):
         self.check_block("completed_daily_bars", 59, "60 completed")
         self.check_block("completed_daily_bars", "60.5", "60 completed")
         self.check_block("ask", "NaN", "finite")
+
+
+def demo_earnings_packet():
+    from active_trading.policy import load_policy
+    from active_trading.risk.equity import build_strategy_risk_state
+    from active_trading.risk.review import canonical_hash
+    from test_demo_risk import demo_fixture, equity_packet
+    packet = uncapped_packet()
+    fixture, policy = demo_fixture()
+    packet.update(mode="DEMO", spec_hash=canonical_hash(policy))
+    packet["account"].update(mode="DEMO", account_environment="DEMO", account_id="fictional-shadow-account",
+                             equity_usd="141000", uncommitted_buying_power_usd="141000")
+    packet["account"].pop("account_risk_score")
+    packet["frozen_allocation"]["equity_usd"] = "141000"
+    state_input = equity_packet(policy, observed_at=packet["as_of"], night_id="2026-10-07",
+                               night_session={"session_date": "2026-10-07", "open_at": "2026-10-07T13:30:00Z", "close_at": "2026-10-07T20:00:00Z"})
+    packet["strategy_risk_state"] = build_strategy_risk_state(policy, state_input, packet["as_of"])
+    sessions, day = [], date(2026, 10, 6)
+    while len(sessions) < 60:
+        if day.weekday() < 5: sessions.append(day.isoformat())
+        day -= timedelta(days=1)
+    for event in packet["events"]:
+        event["instrument_id"] = "SYNTHETIC_" + event["event_id"]
+        event["technical_analysis"] = deepcopy(fixture["proposal"]["technical_analysis"])
+        event["technical_analysis"].update(instrument_id=event["instrument_id"], observed_at=packet["as_of"],
+                                            as_of_session="2026-10-06")
+        event["stress_sizing"] = {"source": "SYNTHETIC_NOT_MARKET_DATA", "instrument_id": event["instrument_id"],
+            "observed_at": packet["as_of"], "complete": True,
+            "overnight_gaps": [{"session": day, "gap_fraction": ".01"} for day in reversed(sessions)],
+            "earnings_releases": [{"release_id": f"SYNTHETIC_{year}_{month}",
+                "release_at": f"{year}-{month:02d}-01T20:05:00Z", "issuer_confirmed": True,
+                "source": "SYNTHETIC_ISSUER", "overnight_gap_fraction": ".02"}
+                for year in (2024, 2025) for month in (1, 4, 7, 10)]}
+        event["costs"] = {"status": "KNOWN", "coverage": "ROUND_TRIP", "per_instrument": True,
+            "instrument_id": event["instrument_id"], "source": "SYNTHETIC_NOT_ETORO_FEES",
+            "model_hash": "c" * 64, "estimated_total_usd": "1"}
+    return packet, policy
+
+
+class EarningsDemoPolicyTests(unittest.TestCase):
+    def setUp(self):
+        self.packet, self.policy = demo_earnings_packet()
+
+    def check(self):
+        from active_trading.risk.review import canonical_hash
+        self.packet["spec_hash"] = canonical_hash(self.policy)
+        return build_shadow_plan(self.packet, policy=self.policy)
+
+    def test_large_demo_balance_keeps_allocation_based_caps_and_cost_reserves(self):
+        plan = self.check()
+        self.assertEqual(plan["capital_basis_usd"], "10000.00")
+        self.assertEqual(plan["whole_book_gross_limit_usd"], "3000.00")
+        self.assertEqual(plan["mode"], "DEMO")
+        self.assertEqual(amounts(plan)["SYNTHA"], Decimal("799"))
+        self.assertEqual(Decimal(plan["earnings_reserved_costs_usd"]), Decimal("3"))
+        for row in plan["proposals"]:
+            self.assertLessEqual(Decimal(row["proposed_notional_usd"]) + Decimal(row["reserved_round_trip_costs_usd"]), Decimal("1000"))
+            self.assertLessEqual(Decimal(row["stress_loss_usd"]), Decimal("25"))
+        self.assertFalse(plan["execution_approved"])
+        self.assertFalse(plan["broker_writes"])
+
+    def test_smaller_account_reduces_name_gross_and_stress_dollars(self):
+        self.packet["account"].update(equity_usd="4000", uncommitted_buying_power_usd="4000")
+        plan = self.check()
+        self.assertEqual(plan["capital_basis_usd"], "4000.00")
+        self.assertEqual(plan["whole_book_gross_limit_usd"], "1200.00")
+        for row in plan["proposals"]:
+            self.assertLessEqual(Decimal(row["stress_loss_usd"]), Decimal("10"))
+            self.assertLessEqual(Decimal(row["proposed_notional_usd"]) + Decimal(row["reserved_round_trip_costs_usd"]), Decimal("400"))
+
+    def test_policy_changes_govern_planner_limits(self):
+        self.policy["risk"].update(maximum_name_weight=.05, maximum_positions=2, maximum_gross_weight_including_pending=.1)
+        self.packet["frozen_allocation"]["pool_ceiling_usd"] = "1000"
+        plan = self.check()
+        self.assertEqual(plan["whole_book_gross_limit_usd"], "1000.00")
+        self.assertEqual(len(plan["proposals"]), 2)
+        for row in plan["proposals"]:
+            self.assertLessEqual(Decimal(row["proposed_notional_usd"]) + Decimal(row["reserved_round_trip_costs_usd"]), Decimal("500"))
+
+    def test_demo_risk_score_switch_off_real_score_refused(self):
+        self.packet["account"]["account_risk_score"] = 10
+        self.assertTrue(self.check()["proposals"])
+        self.packet["account"]["risk_score_account_environment"] = "LIVE"
+        with self.assertRaisesRegex(EarningsPlanningError, "Real-account"): self.check()
+
+    def test_earnings_gap_and_costs_clip_stakes_to_25_dollars(self):
+        self.packet = one_event(self.packet)
+        self.packet["events"][0]["stress_sizing"]["earnings_releases"][-1]["overnight_gap_fraction"] = "-.1"
+        row = self.check()["proposals"][0]
+        self.assertEqual(Decimal(row["proposed_notional_usd"]), Decimal("240"))
+        self.assertEqual(Decimal(row["stress_loss_usd"]), Decimal("25"))
+
+    def test_missing_or_unknown_round_trip_costs_and_release_history_block_event(self):
+        for change in ("unknown", "entry-only", "history"):
+            self.packet, self.policy = demo_earnings_packet()
+            self.packet = one_event(self.packet)
+            event = self.packet["events"][0]
+            if change == "unknown": event["costs"]["status"] = "UNKNOWN"
+            if change == "entry-only": event["costs"]["coverage"] = "ENTRY_ONLY"
+            if change == "history": event["stress_sizing"]["earnings_releases"].pop()
+            with self.subTest(change=change):
+                self.assertEqual(self.check()["proposals"], [])
+
+    def test_automatic_beta_or_current_price_atr_review_cannot_be_waived(self):
+        for field, value in (("beta", "1.5"), ("atr14", "4")):
+            self.packet, self.policy = demo_earnings_packet()
+            self.packet = one_event(self.packet)
+            event = self.packet["events"][0]
+            event["technical_analysis"][field] = value
+            event["review"]["enhanced_risk_review_pass"] = False
+            with self.subTest(field=field): self.assertEqual(self.check()["proposals"], [])
+
+    def test_night_loss_and_drawdown_pause_all_new_earnings(self):
+        for change in ("night", "drawdown", "latched"):
+            self.packet, self.policy = demo_earnings_packet()
+            state = self.packet["strategy_risk_state"]
+            if change == "night": state["equity_usd"] = "9900"
+            if change == "drawdown": state["cash_flow_adjusted_high_water_mark_usd"] = "10500"
+            if change == "latched": state["drawdown_pause_latched"] = True
+            with self.subTest(change=change), self.assertRaises(EarningsPlanningError): self.check()
+
+    def test_existing_name_breach_and_split_pending_rows_block_new_proposals(self):
+        self.packet["account"]["holdings"] = [{"ticker": "OTHER", "notional_usd": "600", "sleeve": "OTHER"}]
+        self.packet["account"]["pending_entries"] = [{"ticker": "OTHER", "notional_usd": "401", "sleeve": "OTHER"}]
+        with self.assertRaisesRegex(EarningsPlanningError, "allocation-based name cap"): self.check()
+
+    def test_refresh_preserves_stock_ceiling_without_deducting_costs_twice(self):
+        first = self.check()
+        self.packet["prior_proposed_ceiling_usd_by_event_id"] = first["refresh_ceiling_usd_by_event_id"]
+        self.assertEqual(amounts(first), amounts(self.check()))
 
 
 class EarningsCalendarTests(unittest.TestCase):

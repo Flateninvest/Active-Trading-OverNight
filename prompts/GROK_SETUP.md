@@ -1,16 +1,18 @@
-# Grok workshop setup
+# Grok DEMO setup and acceptance
 
-Use [the current complete prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt), plus the actual daily flow, Hidden Angles and research files supplied privately. The workshop, research-loop and earnings addenda are already included; do not append them again. Supply intermittent earnings setup PDFs privately, and read [the earnings workflow](../docs/EARNINGS_STRATEGY.md). Sunday/Monday uploads prepare the watchlist; they do not change entry weekdays. The previous dated workshop prompt is an archive.
+Use [the current prompt](Grok_Overnight_Stock_Bot_Prompt_Current.txt), [specification](../spec/strategy_spec.provisional.json) and [current rules](../CURRENT_RULES.md) from one exact reviewed commit. Do not append historical addenda.
 
-1. Default to SHADOW. Do not call real or demo order-writing tools.
-2. Verify complete worksheet parsing, sourced TA data, timestamped quotes and persistence. State missing capabilities honestly.
-3. Implement the four components around one effective specification. One bot's four stages are self-review unless isolation is actually enforced.
-4. Obtain the workshop reference repository/commit and validate its schema, positions and log format. Internal files remain provisional meanwhile.
-5. Reproduce derived figures from committed code and preserved private inputs; keep every trial and exception.
-6. Demonstrate the lifecycle without broker writes: intake/freeze, proposal, risk verdict on that exact proposal, labeled approval record, modeled entry/exit and reconciled tear sheet.
-7. Keep passive bid/ask execution as a separate experiment. Verify resting open/close support; do not infer fills from quotes or extend the primary opening exit.
-8. Only configure routines after the exact owner, timezone/calendar behavior, permissions and missing-input/recovery rules are verified and authorised. This repository does not create them.
-9. Apply [the mandatory research loop](../docs/RESEARCH_LOOP.md). Draft the falsifiable hypothesis, freeze data and costs, log every variant, ablate one change, obtain owner-signed preregistration before opening a fresh holdout and regenerate the headline before reporting it. Actual holdout dates/year and approval remain unset.
-10. The offline demonstration can be run with `python scripts/research_loop.py demo --output .runtime/research-loop-demo`. It checks metadata/artifact workflow using invented fixtures; it is not a real strategy simulation or authenticated owner approval.
+1. Inventory actual local source commit, policy hash, parsing/TA/quote/calendar producers, DEMO account scope, reviewer separation, durable state, scheduler and alert delivery. Report missing/unverified capabilities.
+2. Compare local policy with the repository policy. Stop new entries on mismatch; preserve owned exits and existing intent/position identities.
+3. Validate DEMO-only account and existing permission scope privately. Demo authorization does not authorize REAL, transfers, new credentials or public posting. Never use the real account's risk score.
+4. Run supported offline checks. `python scripts/validate_portable.py` writes ignored evidence. `--demo` commands are synthetic SHADOW demonstrations, not eToro DEMO orders.
+5. Supply flow, Hidden Angles/research and intermittent earnings PDFs privately with hashes and actual receipt/publication dates. Freeze one combined register at 09:00 Paris; later data removes only.
+6. Produce sourced completed-bar TA, last-60-session gaps, eight confirmed release gaps for earnings, official Monday references and round-trip costs. PASS labels do not authenticate facts.
+7. Separate analyst/reviewer identities and credentials. Keep service-held keys outside Git and unavailable to the analyst; never use an always-true production verifier.
+8. Persist allocation-based reservations, mode-scoped records, remaining owned units and next-opening exits. Follow [order memory](../docs/ORDER_MEMORY.md) and controlled incident resolution.
+9. Persist segregated strategy cash, bid marks, flows and pause latches. Drawdown resumption requires externally verified owner review. Exclude the OKTA override from equity.
+10. Prepare exits open minus five, first request at US 09:30 open, reconcile before retries, wait at least five seconds and alert after twelve. Verify actual local scheduling/restart/alert evidence; the repository does not deploy these services.
+11. Import external DEMO history through accounting. Preview is not a fill; fees remain UNKNOWN until final complete history confirms them. Preserve earlier records and unsold units.
+12. Follow [research loop](../docs/RESEARCH_LOOP.md) and [homework checklist](../docs/HOMEWORK_CHECKLIST_2026-10-09.md). DEMO operation does not create a signature, validated edge or completed homework.
 
-Live capital, loss/drawdown limits, ownership IDs, execution capability and permission remain unapproved/unset. A risk PASS, test success or prompt upload is not transaction approval. Do not publish the copier-note draft without permission.
+Return an acceptance receipt with actual local commit/policy hash, checks/results, policy diff, missing integrations and unchanged owned exit obligations. An uninspected separate build cannot be certified by the repository maintainer. No merge, live activation, public upload or new permission follows from this checklist.

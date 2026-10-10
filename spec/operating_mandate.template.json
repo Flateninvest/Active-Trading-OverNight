@@ -1,29 +1,39 @@
 {
-  "status": "DRAFT_NOT_EXECUTION_AUTHORITY",
-  "mode": "SHADOW",
+  "status": "DEMO_POLICY_TEMPLATE_NOT_A_BROKER_CREDENTIAL_OR_ORDER_APPROVAL",
+  "mode": "DEMO",
   "account_alias": null,
   "live_capital": null,
-  "currency": null,
-  "loss_limits": null,
-  "drawdown_limits": null,
+  "currency": "USD",
+  "loss_limits": {
+    "position_stress_usd": 25,
+    "single_night_usd": 100
+  },
+  "drawdown_limits": {
+    "cash_flow_adjusted_high_water_mark_usd": 500,
+    "resume": "OWNER_REVIEW_REQUIRED"
+  },
   "approved_by": null,
   "approved_at": null,
   "protected_position_ids": null,
   "permissions": {
     "broker_reads": "VERIFY_ACCOUNT_SCOPE",
     "real_orders": false,
-    "demo_orders": false,
+    "demo_orders": "EXTERNAL_OWNER_AUTHORIZED_DEMO_RUNTIME_ONLY_NO_REPOSITORY_WRITER",
     "public_posting": false,
     "fund_transfers": false
   },
   "exit_owner": null,
   "alert_channel": null,
   "restart_owner": null,
-  "scope": "Draft template only; both research sleeves share common book limits. Existing unrelated positions are outside this strategy. No order authority follows from this template.",
+  "scope": "Owner-selected DEMO policy; account alias, scoped credentials, operator and trusted producers still configured privately. LIVE, transfers and public posting remain disabled; research signature remains separate.",
   "strategy_id": "GROK_DAILY_OVERNIGHT_v2",
   "research_sleeves": [
     "FLOW_RESEARCH_OVERNIGHT",
     "EARNINGS_OVERNIGHT"
   ],
-  "earnings_allocation_ceiling_usd": null
+  "earnings_allocation_ceiling_usd": null,
+  "strategy_allocation_usd": 10000,
+  "policy_source": "strategy_spec.provisional.json",
+  "policy_version": "OWNER_DEMO_2026-10-10_v1",
+  "numeric_fields_are_policy_examples_not_independent_limits": true
 }

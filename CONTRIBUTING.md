@@ -17,13 +17,13 @@
 | New code or document | Relevant folder index, root links when useful, installation/run instructions if changed |
 | Material project update | [CHANGELOG.md](CHANGELOG.md) with its date, scope and validation summary |
 
-For strategy changes, state the old and new values, rationale, information cutoff, evaluation version and data needed. Keep daily, weekly and passive studies and prospective trials distinct. Update the standalone workshop addendum when its included section changes. Unresolved rule conflicts block reliance on the affected rule; review them explicitly.
+For strategy changes, state the old and new values, rationale, information cutoff, evaluation version and data needed. Keep daily, weekly and passive studies and prospective trials distinct. Maintain only the current complete prompt; dated addenda are archived and must not become competing effective instructions. Unresolved rule conflicts block reliance on the affected rule; review them explicitly.
 
 Keep dated meeting PDFs and historical research as snapshots. Publish a new dated artifact when replacing one, preserve the previous version and update the relevant links. Do not rewrite old evidence as though it described the new design.
 
 ## Validate and merge
 
-- Run `python scripts/validate_portable.py` for code or configuration changes. Its saved record identifies the checked commit; if relevant source is uncommitted it says so. Commit the code first, then record validation on that committed code in a separate commit when publishing new evidence.
+- Run `python scripts/validate_portable.py` for code or configuration changes. Its ignored .runtime/portable/check-result.json identifies the checked commit; if relevant source is uncommitted it says so. It must not rewrite tracked evidence; publish a separately reviewed dated record explicitly. Commit the code first, then record validation on that committed code in a separate commit when publishing new evidence.
 - For documentation-only changes, check relative links, readability and consistency. GitHub still runs the portable check on the pull request.
 - Report omitted historical checks honestly: those require separately supplied private datasets. Synthetic results do not establish profits or a completed daily runtime.
 - Protected `main` requires a pull request, a passing `synthetic-checks` result on an up-to-date branch and resolved conversations. Force pushes and deletion are blocked, including for the owner.
@@ -34,4 +34,4 @@ Readers should use the [sharing guide](docs/SHARING.md). A public viewer can sug
 
 Research experiments must also follow [the workshop loop](docs/RESEARCH_LOOP.md). Log all attempts, freeze costs and the appropriate full-model/economic comparators, and obtain real owner preregistration before opening a fresh holdout. Keep the current prompt, research policy and plan consistent. A development merge does not sign the research plan or authorize trading.
 
-Do not silently update strategy versions, approve your own policy exceptions or publish copier notes. The reference schemas and trading mandate require their own recorded acceptance.
+Do not silently update strategy versions, approve your own policy exceptions or publish copier notes. Task 1 uses our own specification and validator with the required field names. Any later external interface mapping and the trading mandate require their own recorded acceptance.

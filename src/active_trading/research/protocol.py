@@ -19,6 +19,7 @@ import re
 import subprocess
 import tempfile
 from typing import Callable
+from active_trading.jsonio import load_json, loads_json
 
 
 class ProtocolError(ValueError):
@@ -326,8 +327,8 @@ def read_ledger(path, expected_tail_hash=None):
     """Read and validate a ledger; a trusted tail anchor detects truncation."""
     path = Path(path)
     try:
-        events = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()] if path.exists() else []
-    except (OSError, json.JSONDecodeError) as error:
+        events = [loads_json(line) for line in path.read_text(encoding="utf-8").splitlines()] if path.exists() else []
+    except (OSError, ValueError) as error:
         raise ProtocolError("Ledger is unavailable or contains an incomplete/invalid event") from error
     _validate_events(events)
     if expected_tail_hash is not None and expected_tail_hash != (events[-1]["event_hash"] if events else GENESIS_HASH):
@@ -600,9 +601,9 @@ def verify_report(plan, events, artifact, reproduced, *, artifact_paths,
     if any(e["type"] == "CORRECTION" and e["target_event_hash"] in affected_hashes for e in events):
         _fail("Corrected trial evidence requires a new linked trial and regeneration")
     try:
-        result_data = json.loads(Path(paths["results"]).read_text(encoding="utf-8"))
-        regenerated_data = json.loads(Path(paths["reproduced_results"]).read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
+        result_data = load_json(paths["results"])
+        regenerated_data = load_json(paths["reproduced_results"])
+    except (OSError, ValueError) as error:
         raise ProtocolError("Results must be valid JSON artifacts") from error
     for data in (result_data, regenerated_data):
         _mapping(data, "results file")
